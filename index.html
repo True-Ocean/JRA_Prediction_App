@@ -67,7 +67,7 @@
             display: flex; 
             align-items: center; 
             justify-content: flex-start; 
-            padding: 15px 15px 15px 60px; 
+            padding: 15px 15px 15px 15px; 
             border-bottom: 1px solid #eee;
             min-width: 320px; /* ★スマホでも画像化の際に潰れない最低幅を確保 */
             box-sizing: border-box;
@@ -658,12 +658,18 @@ function generatePrediction() {
 
 async function saveAsImage() {
     const target = document.querySelector("#result .prediction-card");
+    const items = document.querySelectorAll(".prediction-item");
     if (!target) return;
 
-    // 余白を詰めるため、一時的に幅をコンテンツに合わせる
-    const originalWidth = target.style.width;
+    // --- 【保存用のスタイル一時調整】 ---
+    // 1. 全体幅をコンテンツに合わせる（右の余白を消す）
     target.style.width = "max-content";
-    target.style.minWidth = "450px"; // ある程度の横長感を出すための最低幅
+    target.style.minWidth = "450px"; 
+
+    // 2. 各アイテムの左余白だけを増やす（保存される画像だけ左に寄せる）
+    items.forEach(item => {
+        item.style.paddingLeft = "60px";
+    });
 
     try {
         const canvas = await html2canvas(target, {
@@ -672,11 +678,9 @@ async function saveAsImage() {
             logging: false
         });
 
-        // 1. CanvasをBlob形式に変換
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         const file = new File([blob], `prediction_${new Date().getTime()}.png`, { type: 'image/png' });
 
-        // 2. 共有処理
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
                 files: [file],
@@ -689,9 +693,12 @@ async function saveAsImage() {
     } catch (error) {
         console.error("Error sharing:", error);
     } finally {
-        // スタイルを元に戻す
-        target.style.width = originalWidth;
+        // --- 【スタイルを元の画面表示用に戻す】 ---
+        target.style.width = "";
         target.style.minWidth = "";
+        items.forEach(item => {
+            item.style.paddingLeft = "15px"; // 画面表示用の padding に戻す
+        });
     }
 }
 
