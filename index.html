@@ -661,25 +661,37 @@ async function saveAsImage() {
     const target = document.querySelector("#result .prediction-card");
     if (!target) return;
 
-    // 見切れ防止：一時的に幅を固定
+    // 現在のカードの「高さ」を取得して、それを「幅」にする（正方形にするため）
+    // カード自体のパディングや枠線を考慮した offsetHeight を使用
+    const cardHeight = target.offsetHeight;
+    const size = cardHeight; // 正方形の一辺の長さ
+
+    // 見切れ防止と正方形維持のため、一時的にスタイルを固定
     const originalWidth = target.style.width;
-    target.style.width = "600px";
+    const originalMinWidth = target.style.minWidth;
+    
+    // 縦横比を1:1に近づけるため、幅を高さと同じに設定
+    target.style.width = size + "px";
+    target.style.minWidth = size + "px";
 
     try {
         const canvas = await html2canvas(target, {
             scale: 2,
             backgroundColor: "#ffffff",
-            width: 600,
-            windowWidth: 600
+            width: size,        // キャンバスの幅を高さに合わせる
+            height: size,       // キャンバスの高さを指定
+            windowWidth: size   // 描画基準幅をサイズに合わせる
         });
 
-        target.style.width = originalWidth; // 幅を元に戻す
+        // スタイルを元に戻す
+        target.style.width = originalWidth;
+        target.style.minWidth = originalMinWidth;
 
-        // 1. CanvasをBlob形式（ファイルデータ）に変換
+        // 1. CanvasをBlob形式に変換
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         const file = new File([blob], `prediction_${new Date().getTime()}.png`, { type: 'image/png' });
 
-        // 2. Web Share API が使えるか、かつファイルの共有が可能かチェック
+        // 2. Web Share API チェック
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
                 files: [file],
@@ -687,13 +699,15 @@ async function saveAsImage() {
                 text: currentPredictionText
             });
         } else {
-            // 3. Web Share APIが使えない場合（PCや一部のブラウザ）
-            // 前回の「デバイス判別ロジック」へ飛ばす
             handleFallbackSave(canvas.toDataURL("image/png"));
         }
     } catch (error) {
         console.error("Error sharing:", error);
-        alert("画像の生成または共有に失敗しました。");
+        // キャンセル時はアラートを出さないように調整（UX向上）
+    } finally {
+        // 万が一エラーが起きてもスタイルが崩れないよう念のため復元
+        target.style.width = originalWidth;
+        target.style.minWidth = originalMinWidth;
     }
 }
 
