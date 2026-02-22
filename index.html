@@ -62,12 +62,22 @@
         /* 予想結果 */
         #result { margin-top: 25px; }
         .prediction-card { border: 1px solid #ddd; border-radius: 8px; background: #fff; overflow: hidden; }
-        .prediction-item { display: flex; align-items: center; justify-content: flex-start; padding: 12px 15px; border-bottom: 1px solid #eee; }
+
+        .prediction-item { 
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-start; 
+            padding: 12px 15px; 
+            border-bottom: 1px solid #eee;
+            min-width: 320px; /* ★スマホでも画像化の際に潰れない最低幅を確保 */
+            box-sizing: border-box;
+        }
+
         .prediction-item:last-child { border-bottom: none; }
         .term { width: 45px; font-size: 0.75em; color: #7f8c8d; font-weight: bold; flex-shrink: 0; }
         .mark { width: 30px; font-weight: bold; font-size: 1.2em; text-align: center; flex-shrink: 0; }
         .waku-box { width: 42px; height: 42px; border: 2px solid #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.4em; margin-left: 10px; flex-shrink: 0; }
-        .horse-info { margin-left: 12px; display: flex; flex-direction: column; min-width: 0; }
+        .horse-info { margin-left: 12px; display: flex; flex-direction: column; min-width: 0; flex: 1;}
         .horse-name { font-weight: bold; font-size: 1em; color: #2c3e50; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .jockey-name { font-size: 0.8em; color: #666; margin-top: 2px; }
                 
@@ -505,7 +515,7 @@ function validateInputs() {
         // レース条件は揃ったが、ワードがまだの場合
         // すでにエラーが出ている状態なら、メッセージだけ「ワード入力」に切り替える
         if (errorEl.classList.contains('show')) {
-            errorEl.innerText = "エラー：最低1つのワードを入力してください。\nあなたの「勘」や「好きな言葉」が予想の種になります！";
+            errorEl.innerText = "エラー：最低1つ、ワードを入力してね！\nそのワードが予想の種になるよ！";
         }
     } else if (!isRaceConfigOk) {
         // まだレース条件が揃っていない場合
@@ -644,10 +654,25 @@ function generatePrediction() {
 function saveAsImage() {
     const target = document.querySelector("#result .prediction-card");
     if (!target) return;
+
+    // --- 【見切れ防止ロジック開始】 ---
+    // 現在のスタイルを保存
+    const originalWidth = target.style.width;
+    
+    // 画像化のために一時的に幅を600px（PCで見ているような幅）に固定
+    // これにより、スマホの小さな画面幅に引きずられずに画像化できます
+    target.style.width = "600px";
+
     html2canvas(target, {
-        scale: 2,
-        backgroundColor: "#ffffff"
+        scale: 2,           // 高画質化
+        backgroundColor: "#ffffff",
+        useCORS: true,      // 外部リソースがある場合用
+        width: 600,         // キャンバスの幅を明示
+        windowWidth: 600    // ブラウザの幅を600pxと仮定してレンダリング
     }).then(canvas => {
+        // スタイルを元に戻す
+        target.style.width = originalWidth;
+
         const link = document.createElement("a");
         link.download = `prediction_${new Date().getTime()}.png`;
         link.href = canvas.toDataURL("image/png");
