@@ -13,6 +13,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="🐎 ランダムワードで簡単競馬予想">
     <meta name="twitter:description" content="好きな言葉を種にして、自分だけの簡単競馬予想！">
+    <meta name="twitter:image" content="https://true-ocean.github.io/JRA_Prediction_App/image.png">
 
     <title>🐎 ランダムワードで簡単競馬予想</title>
     <style>
@@ -619,7 +620,7 @@ function generatePrediction() {
 
     let usedWords = [w1, w2, w3].filter(w => w !== "").join("\n");
     if (usedWords) {
-        copyText += `入力ランダムワード：\n${usedWords}\n`;
+        copyText += `入力ワード：\n${usedWords}\n`;
     }
     copyText += `\n`;
 
