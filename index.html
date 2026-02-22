@@ -33,6 +33,16 @@
         label { font-weight: bold; margin-bottom: 5px; font-size: 0.85em; color: #555; text-align: left;}
         select, input { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; background: #fff; width: 100%; box-sizing: border-box; -webkit-appearance: none; appearance: none; text-align: left; text-align-last: left; }
         
+        /* 無効化されたセレクトボックスや入力欄のスタイル */
+        select:disabled, input:disabled {
+            background-color: #f0f0f0; /* 少しグレーにする */
+            color: #999;              /* 文字を薄くする */
+            cursor: not-allowed;      /* カーソルを禁止マークにする */
+            border-color: #ddd;       /* 枠線を薄くする */
+            opacity: 1;               /* iOSでの透明度調整を無効化 */
+            -webkit-text-fill-color: #999; /* iOSでの文字色を固定 */
+        }
+        
         /* グリッドレイアウト（スマホ時は1列） */
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 5px; }
         @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
@@ -101,15 +111,14 @@
     <h1 id="mainTitle">🏇 レース予想（汎用）</h1>
     
     <p style="text-align: center; font-size: 0.8em; color: #666; line-height: 1.6; margin-bottom: 20px; background: #f9f9f9; padding: 10px; border-radius: 6px; border-left: 4px solid var(--theme-color);">
-        あなただけのランダムワードを入力してみよう！<br>
-        条件を変更すれば他レースの予想もできるよ！<br>
-        （他レースの場合、馬番のみの表示になります）
+        あなただけのランダムワードで簡単競馬予想！<br>
+        ⚠️ 汎用モードでは馬番のみの出力になります
     </p>
 
     <div class="form-group">
         <label>レース選択</label>
         <select id="raceSelector" onchange="applySelectedRace()">
-            <option value="-1">自分でレース条件を選択（汎用モード）</option>
+            <option value="-1">汎用モード：自分で条件選択</option>
             </select>
     </div>
 
@@ -325,6 +334,19 @@ window.onload = function() {
     applySelectedRace("-1");
 };
 
+// 入力項目の有効・無効を切り替える関数
+function toggleInputsDisabled(isDisabled) {
+    const targetIds = [
+        'raceDate', 'venue', 'raceNum', 'ageLimit', 
+        'raceClass', 'track', 'distance', 'weightType', 'horseCount'
+    ];
+    
+    targetIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = isDisabled;
+    });
+}
+
 // 選択されたレースの情報を入力欄に反映する
 function applySelectedRace(forcedIndex = null) {
     const selector = document.getElementById('raceSelector');
@@ -332,13 +354,14 @@ function applySelectedRace(forcedIndex = null) {
     
     // レースを切り替えたら、以前のエラー表示を消す
     const errorEl = document.getElementById('errorMessage');
-if (errorEl) {
+    if (errorEl) {
         errorEl.classList.remove('show');
     }
 
     // --- 「自分で設定する」を選んだ場合の処理 ---
     if (index === "-1") {
-        // 全ての入力を初期化・クリアする
+        // 入力を有効にして、全ての入力を初期化・クリアする
+        toggleInputsDisabled(false);
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('raceDate').value = today; // 日付は今日にリセット
         document.getElementById('venue').value = "";
@@ -362,6 +385,7 @@ if (errorEl) {
     }
     
     // --- 特定のレースを選んだ場合の処理 ---
+    toggleInputsDisabled(true); // ★入力を無効にする
     const race = RACE_LIST[index];
     document.getElementById('raceDate').value = race.raceDate;
     document.getElementById('venue').value = race.venue;
