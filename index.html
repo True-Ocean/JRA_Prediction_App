@@ -240,8 +240,8 @@
     <div id="result"></div>
 
     <div class="button-stack">
-        <button class="btn-save" id="saveBtn" onclick="saveAsImage()" style="background: #FF77FF; display: none;">予想結果を画像で保存</button>
-        <button class="btn-x" id="xBtn" onclick="postToX()" style="background: #000; display: none;">予想結果を X にポスト</button>
+        <button class="btn-save" id="saveBtn" onclick="saveAsImage()" style="background: #FF77FF; display: none;">予想結果を画像で保存・共有</button>
+        <button class="btn-x" id="xBtn" onclick="postToX()" style="background: #000; display: none;">予想結果を X にポスト（画像なし）</button>
         <button class="btn-copy" id="copyBtn" onclick="copyResult()">予想結果をクリップボードにコピー</button>
     </div>
 
@@ -609,7 +609,7 @@ function generatePrediction() {
 
     // 結果表示の構築
     const marks = [
-        {t: "本命", s: "◎"}, {t: "対抗", s: "○"},
+        {t: "本命", s: "◎"}, {t: "対抗", s: "◯"},
         {t: "単穴", s: "▲"}, {t: "連下", s: "△"}, {t: "星", s: "⭐︎"}
     ];
 
@@ -693,7 +693,10 @@ async function saveAsImage() {
         }
     } catch (error) {
         console.error("Error sharing:", error);
-        alert("画像の生成または共有に失敗しました。");
+
+    } finally {
+        // 成功しても失敗しても、最後に必ずスタイルを元に戻す
+        target.style.width = originalWidth;
     }
 }
 
