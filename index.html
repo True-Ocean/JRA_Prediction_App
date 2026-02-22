@@ -182,26 +182,41 @@
 </div>
 
 <script>
+// ==========================================
+// 【今週のレース設定】ここを書き換えるだけでOK！
+// ==========================================
+const CURRENT_RACE = {
+    title: "フェブラリーS 2026",
+    venue: "東京",
+    raceNum: "11R",
+    track: "ダート",
+    distance: "1600",
+    ageLimit: "4歳以上",
+    raceClass: "G1",
+    weightType: "定量",
+    horseCount: 16,
+    // 出走馬リスト
+    horses: [
+        { name: "オメガギネス", info: "牡6", jockey: "岩田康誠" },
+        { name: "ハッピーマン", info: "牡4", jockey: "高杉吏麒" },
+        { name: "ブライアンセンス", info: "牡6", jockey: "岩田望来" },
+        { name: "ペリエール", info: "牡6", jockey: "佐々木大" },
+        { name: "シックスペンス", info: "牡5", jockey: "戸崎圭太" },
+        { name: "ラムジェット", info: "牡5", jockey: "三浦皇成" },
+        { name: "ロングラン", info: "セ8", jockey: "荻野極" },
+        { name: "サクラトゥジュール", info: "セ9", jockey: "キング" },
+        { name: "ダブルハートボンド", info: "牝5", jockey: "坂井瑠星" },
+        { name: "ロードクロンヌ", info: "牡5", jockey: "横山和生" },
+        { name: "サンライズホーク", info: "セ7", jockey: "松岡正海" },
+        { name: "コスタノヴァ", info: "牡6", jockey: "ルメール" },
+        { name: "ナチュラルライズ", info: "牡4", jockey: "横山武史" },
+        { name: "ウィルソンテソーロ", info: "牡7", jockey: "川田将雅" },
+        { name: "ペプチドナイル", info: "牡8", jockey: "富田暁" },
+        { name: "サイモンザナドゥ", info: "牡6", jockey: "池添謙一" }
+    ]
+};
+// ==========================================
 
-// 違うG1になれば、ここの情報を変更すること（Geminiに画像を渡して修正させた方が早い）=============================================================================
-const horseDetails = [
-    { name: "オメガギネス", info: "牡6", jockey: "岩田康誠" },
-    { name: "ハッピーマン", info: "牡4", jockey: "高杉吏麒" },
-    { name: "ブライアンセンス", info: "牡6", jockey: "岩田望来" },
-    { name: "ペリエール", info: "牡6", jockey: "佐々木大" },
-    { name: "シックスペンス", info: "牡5", jockey: "戸崎圭太" },
-    { name: "ラムジェット", info: "牡5", jockey: "三浦皇成" },
-    { name: "ロングラン", info: "セ8", jockey: "荻野極" },
-    { name: "サクラトゥジュール", info: "セ9", jockey: "キング" },
-    { name: "ダブルハートボンド", info: "牝5", jockey: "坂井瑠星" },
-    { name: "ロードクロンヌ", info: "牡5", jockey: "横山和生" },
-    { name: "サンライズホーク", info: "セ7", jockey: "松岡正海" },
-    { name: "コスタノヴァ", info: "牡6", jockey: "ルメール" },
-    { name: "ナチュラルライズ", info: "牡4", jockey: "横山武史" },
-    { name: "ウィルソンテソーロ", info: "牡7", jockey: "川田将雅" },
-    { name: "ペプチドナイル", info: "牡8", jockey: "富田暁" },
-    { name: "サイモンザナドゥ", info: "牡6", jockey: "池添謙一" }
-];
 
 let isFebStakes = true;
 let currentPredictionText = "";
@@ -221,26 +236,30 @@ function checkRaceMode() {
     const count = document.getElementById('horseCount').value;
     const raceClass = document.getElementById('raceClass').value;
 
-    isFebStakes = (venue === "東京" && raceNum === "11R" && track === "ダート" && 
-                   distance === "1600" && weight === "定量" && count === "16" && raceClass === "G1");
+    // 定義したレース情報と一致するか判定
+    isFebStakes = (venue === CURRENT_RACE.venue && 
+                   raceNum === CURRENT_RACE.raceNum && 
+                   track === CURRENT_RACE.track && 
+                   distance === CURRENT_RACE.distance && 
+                   parseInt(count) === CURRENT_RACE.horseCount &&
+                   weight === CURRENT_RACE.weightType &&
+                   raceClass === CURRENT_RACE.raceClass);
 
     // 違うG1になれば、ここのタイトルを変更すること=============================================================================
-    document.getElementById('mainTitle').innerText = isFebStakes ? "🏆 フェブラリーS 2026" : "🏇 レース予想 (汎用)";
+    document.getElementById('mainTitle').innerText = isFebStakes ? `🏆 ${CURRENT_RACE.title}` : "🏇 レース予想 (汎用)";
     // 条件が変わったらコピーボタンを隠す
     document.getElementById('copyBtn').style.display = "none";
 }
 
-
-// 違うG1になれば、ここの条件を変更すること=============================================================================
 function resetToDefault() {
-    document.getElementById('venue').value = "東京";
-    document.getElementById('raceNum').value = "11R";
-    document.getElementById('ageLimit').value = "4歳以上";
-    document.getElementById('raceClass').value = "G1";
-    document.getElementById('track').value = "ダート";
-    document.getElementById('distance').value = "1600";
-    document.getElementById('weightType').value = "定量";
-    document.getElementById('horseCount').value = "16";
+    document.getElementById('venue').value = CURRENT_RACE.venue;
+    document.getElementById('raceNum').value = CURRENT_RACE.raceNum;
+    document.getElementById('ageLimit').value = CURRENT_RACE.ageLimit;
+    document.getElementById('raceClass').value = CURRENT_RACE.raceClass;
+    document.getElementById('track').value = CURRENT_RACE.track;
+    document.getElementById('distance').value = CURRENT_RACE.distance;
+    document.getElementById('weightType').value = CURRENT_RACE.weightType;
+    document.getElementById('horseCount').value = CURRENT_RACE.horseCount;
     document.getElementById('word1').value = "";
     document.getElementById('word2').value = "";
     document.getElementById('word3').value = "";
@@ -315,7 +334,7 @@ function generatePrediction() {
         let lineText = `${marks[i].s} ${horseNum}番`;
 
         if (isFebStakes) {
-            const horse = horseDetails[horseNum - 1] || { name: horseNum + "番", info: "", jockey: "" };
+            const horse = CURRENT_RACE.horses[horseNum - 1] || { name: horseNum + "番", info: "", jockey: "" };
             infoHtml = `
                 <div class="horse-info">
                     <div class="horse-name">${horse.name}（${horse.info}）</div>
