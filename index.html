@@ -274,9 +274,12 @@ function generatePrediction() {
 
     let seed = 0;
     const combined = date + venue + raceNum + 
-                     document.getElementById('ageLimit').value + document.getElementById('raceClass').value + 
-                     document.getElementById('track').value + document.getElementById('distance').value + 
-                     document.getElementById('weightType').value + w1 + w2 + w3;
+                     document.getElementById('ageLimit').value + 
+                     document.getElementById('raceClass').value + 
+                     document.getElementById('track').value + 
+                     document.getElementById('distance').value + 
+                     document.getElementById('weightType').value + 
+                     document.getElementById('condition').value + w1 + w2 + w3;
 
     for (let i = 0; i < combined.length; i++) {
         seed = (seed + combined.charCodeAt(i) * (i + 1)) % 1000000;
@@ -296,7 +299,13 @@ function generatePrediction() {
 
     let html = "<h3>予想結果</h3><div class='prediction-card'>";
     let copyText = `【${document.getElementById('mainTitle').innerText}】\n`;
-    copyText += `${date} ${venue}${raceNum}\n\n`;
+    copyText += `${date} ${venue}${raceNum}\n`;
+
+    let usedWords = [w1, w2, w3].filter(w => w !== "").join(", ");
+    if (usedWords) {
+        copyText += `入力したワード：${usedWords}\n`;
+    }
+    copyText += `\n`;
 
     for(let i = 0; i < 5; i++) {
         if (i >= count) break;
