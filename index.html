@@ -299,11 +299,11 @@ function generatePrediction() {
 
     let html = "<h3>予想結果</h3><div class='prediction-card'>";
     let copyText = `【${document.getElementById('mainTitle').innerText}】\n`;
-    copyText += `${date} ${venue}${raceNum}\n`;
+    copyText += `${date} ${venue}${raceNum}\n\n`;
 
-    let usedWords = [w1, w2, w3].filter(w => w !== "").join(", ");
+    let usedWords = [w1, w2, w3].filter(w => w !== "").join("\n");
     if (usedWords) {
-        copyText += `入力したワード：${usedWords}\n`;
+        copyText += `入力ランダムワード：\n${usedWords}\n`;
     }
     copyText += `\n`;
 
