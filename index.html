@@ -74,7 +74,7 @@
         }
 
         .prediction-item:last-child { border-bottom: none; }
-        .term { width: 45px; font-size: 0.75em; color: #7f8c8d; font-weight: bold; flex-shrink: 0; }
+        .term { display: none; width: 45px; font-size: 0.75em; color: #7f8c8d; font-weight: bold; flex-shrink: 0; }
         .mark { width: 30px; font-weight: bold; font-size: 1.2em; text-align: center; flex-shrink: 0; }
         .waku-box { width: 42px; height: 42px; border: 2px solid #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.4em; margin-left: 10px; flex-shrink: 0; }
         .horse-info { margin-left: 12px; display: flex; flex-direction: column; min-width: 0; flex: 1;}
@@ -628,7 +628,7 @@ function generatePrediction() {
         const horseNum = horses[i];
         const waku = getWakuInfo(horseNum, count);
         let infoHtml = "";
-        let lineText = `${marks[i].s} ${horseNum}番`;
+        let lineText = `${marks[i].s} ${horseNum}`;
 
         if (isRace && currentActiveRace) {
             const horse = currentActiveRace.horses[horseNum - 1] || { name: horseNum + "番", info: "", jockey: "" };
@@ -642,7 +642,6 @@ function generatePrediction() {
 
         html += `
             <div class="prediction-item">
-                <div class="term">${marks[i].t}</div>
                 <div class="mark">${marks[i].s}</div>
                 <div class="waku-box" style="background:${waku.bg}; color:${waku.txt}">${horseNum}</div>
                 ${infoHtml}
