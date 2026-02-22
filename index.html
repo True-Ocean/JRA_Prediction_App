@@ -271,7 +271,7 @@
 const RACE_LIST = [
     {
         raceDate: "2026-02-22",
-        title: "フェブラリーS 2026",
+        title: "フェブラリーS",
         venue: "東京",
         raceNum: "11R",
         track: "ダート",
@@ -568,7 +568,7 @@ function generatePrediction() {
             showError("エラー：未選択の項目があります。");
         }
         else if (!w1 && !w2 && !w3) { 
-            showError("エラー：最低1つのワードを入力してください。\nあなたの「勘」や「好きな言葉」が予想の種になります！");
+            showError("エラー：最低1つ、ワードを入力してね！\nそのワードが予想の種になるよ！");
         }
         return; // 計算を中止
     }
