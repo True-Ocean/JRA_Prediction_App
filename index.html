@@ -60,6 +60,35 @@
         .horse-info { margin-left: 12px; display: flex; flex-direction: column; min-width: 0; }
         .horse-name { font-weight: bold; font-size: 1em; color: #2c3e50; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .jockey-name { font-size: 0.8em; color: #666; margin-top: 2px; }
+                
+        #errorMessage {
+            text-align: center;
+            white-space: pre-line;
+            font-size: 0.9em;
+            
+            /* 初期状態：完全に隠す */
+            opacity: 0;
+            max-height: 0;
+            margin-bottom: 0;
+            padding: 0;
+            visibility: hidden; /* これで隙間を消す */
+            overflow: hidden;
+            transition: all 0.5s ease; /* 0.5秒かけて変化 */
+        }
+
+        /* クラスが付いた時だけ表示 */
+        #errorMessage.show {
+            opacity: 1;
+            max-height: 100px; /* 内容に合わせて適宜調整 */
+            margin-bottom: 15px;
+            padding: 12px;
+            visibility: visible;
+            background-color: #e74c3c;
+            color: #fff;
+            border-radius: 8px;
+            border: 1px solid #c0392b;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 
@@ -80,7 +109,7 @@
     <div class="form-group">
         <label>レース選択</label>
         <select id="raceSelector" onchange="applySelectedRace()">
-            <option value="-1">-- 自分で設定する（汎用モード） --</option>
+            <option value="-1">自分でレース条件を選択（汎用モード）</option>
             </select>
     </div>
 
@@ -91,7 +120,7 @@
 
     <div class="row">
         <div class="form-group"><label>競馬場</label>
-            <select id="venue" onchange="checkRaceMode()">
+            <select id="venue" onchange="checkRaceMode(); validateInputs()">
                 <option value="">-- 選択 --</option>
                 <option>札幌</option><option>函館</option><option>新潟</option><option>福島</option>
                 <option selected>東京</option><option>中山</option><option>中京</option><option>京都</option>
@@ -99,7 +128,7 @@
             </select>
         </div>
         <div class="form-group"><label>レース番号</label>
-            <select id="raceNum" onchange="checkRaceMode()">
+            <select id="raceNum" onchange="checkRaceMode(); validateInputs()">
                 <option value="">-- 選択 --</option>
                 <script>for(let i=1;i<=12;i++){ const sel = (i===11?'selected':''); document.write(`<option value="${i}R" ${sel}>${i}R</option>`); }</script>
             </select>
@@ -108,13 +137,13 @@
 
     <div class="row">
         <div class="form-group"><label>年齢限定</label>
-            <select id="ageLimit" onchange="checkRaceMode()">
+            <select id="ageLimit" onchange="checkRaceMode(); validateInputs()">
                 <option value="">-- 選択 --</option>
                 <option>2歳</option><option>3歳</option><option>3歳以上</option><option selected>4歳以上</option>
             </select>
         </div>
         <div class="form-group"><label>クラス</label>
-            <select id="raceClass" onchange="checkRaceMode()">
+            <select id="raceClass" onchange="checkRaceMode(); validateInputs()">
                 <option value="">-- 選択 --</option>
                 <option selected>G1</option><option>G2</option><option>G3</option><option>OP(L)</option>
                 <option>オープン</option><option>3勝クラス</option><option>2勝クラス</option>
@@ -125,14 +154,14 @@
 
     <div class="row">
         <div class="form-group"><label>トラック</label>
-            <select id="track" onchange="updateTheme(); checkRaceMode();">
+            <select id="track" onchange="updateTheme(); checkRaceMode(); validateInputs()">
                 <option value="">-- 選択 --</option>
                 <option value="芝">芝</option>
                 <option value="ダート" selected>ダート</option>
             </select>
         </div>
         <div class="form-group"><label>距離</label>
-            <select id="distance" onchange="checkRaceMode()">
+            <select id="distance" onchange="checkRaceMode(); validateInputs()">
                 <option value="">-- 選択 --</option>
                 <script>
                     const dists = ['1000','1150','1200','1300','1400','1500','1600','1700','1800','1900','2000','2100','2200','2300','2400','2500','2600','3000','3200','3400','3600'];
@@ -147,22 +176,22 @@
 
     <div class="row">
         <div class="form-group"><label>重量</label>
-            <select id="weightType" onchange="checkRaceMode()">
+            <select id="weightType" onchange="checkRaceMode(); validateInputs()">
                 <option value="">-- 選択 --</option>
                 <option selected>定量</option><option>別定</option><option>馬齢</option><option>ハンデ</option>
             </select>
         </div>
         <div class="form-group"><label>馬場状態</label>
-            <select id="condition">
-                <option value="">-- 選択 --</option>
-                <option selected>良</option><option>稍重</option><option>重</option><option>不良</option>
+            <select id="condition" onchange="validateInputs()">
+                <option value="" selected>-- 選択 --</option>
+                <option>良</option><option>稍重</option><option>重</option><option>不良</option>
             </select>
         </div>
     </div>
 
     <div class="form-group">
         <label>出走頭数</label>
-        <select id="horseCount" onchange="checkRaceMode()">
+        <select id="horseCount" onchange="checkRaceMode(); validateInputs()">
             <option value="">-- 選択 --</option>
             <script>
                 for(let i=5; i<=18; i++) {
@@ -176,11 +205,13 @@
     <div class="form-group">
         <label>お好みのランダムワード（最大3つ）</label>
         <div class="word-inputs">
-            <input type="text" id="word1" placeholder="ワード1">
-            <input type="text" id="word2" placeholder="ワード2">
-            <input type="text" id="word3" placeholder="ワード3">
+            <input type="text" id="word1" placeholder="ワード1" oninput="validateInputs()">
+            <input type="text" id="word2" placeholder="ワード2" oninput="validateInputs()">
+            <input type="text" id="word3" placeholder="ワード3" oninput="validateInputs()">
         </div>
     </div>
+
+    <div id="errorMessage"></div>
 
     <div class="button-stack">
         <button class="btn-predict" onclick="generatePrediction()">予想を算出する</button>
@@ -299,6 +330,12 @@ function applySelectedRace(forcedIndex = null) {
     const selector = document.getElementById('raceSelector');
     const index = forcedIndex !== null ? forcedIndex : selector.value;
     
+    // レースを切り替えたら、以前のエラー表示を消す
+    const errorEl = document.getElementById('errorMessage');
+if (errorEl) {
+        errorEl.classList.remove('show');
+    }
+
     // --- 「自分で設定する」を選んだ場合の処理 ---
     if (index === "-1") {
         // 全ての入力を初期化・クリアする
@@ -308,7 +345,7 @@ function applySelectedRace(forcedIndex = null) {
         document.getElementById('raceNum').value = "";
         document.getElementById('ageLimit').value = "";
         document.getElementById('raceClass').value = "";
-        document.getElementById('track').value = ""; // 一旦「芝」へ
+        document.getElementById('track').value = "";
         document.getElementById('distance').value = "";
         document.getElementById('weightType').value = "";
         document.getElementById('condition').value = "";
@@ -334,6 +371,7 @@ function applySelectedRace(forcedIndex = null) {
     document.getElementById('track').value = race.track;
     document.getElementById('distance').value = race.distance;
     document.getElementById('weightType').value = race.weightType;
+    document.getElementById('condition').value = "";
     document.getElementById('horseCount').value = race.horseCount;
 
     document.getElementById('word1').value = "";
@@ -413,9 +451,8 @@ function updateTheme() {
     }
 }
 
-function generatePrediction() {
-    // 1. 各入力を取得（ここで1回だけ宣言する）
-    const date = document.getElementById('raceDate').value;
+// 入力チェックを行う関数
+function validateInputs() {
     const venue = document.getElementById('venue').value;
     const raceNum = document.getElementById('raceNum').value;
     const ageLimit = document.getElementById('ageLimit').value;
@@ -423,27 +460,92 @@ function generatePrediction() {
     const track = document.getElementById('track').value;
     const distance = document.getElementById('distance').value;
     const weightType = document.getElementById('weightType').value;
-    const condition = document.getElementById('condition').value;
     const horseCount = document.getElementById('horseCount').value;
-
+    const condition = document.getElementById('condition').value;
     const w1 = document.getElementById('word1').value;
     const w2 = document.getElementById('word2').value;
     const w3 = document.getElementById('word3').value;
 
-    // 2. バリデーションチェック（空のものがないか確認）
-    if (!venue || !raceNum || !ageLimit || !raceClass || !track || !distance || !weightType || !horseCount || !condition) {
-        alert("エラー：選択していない項目があります。全て選択してから再度お試しください。");
-        return;
+    const errorEl = document.getElementById('errorMessage');
+
+    // 判定用フラグ
+    const isRaceConfigOk = venue && raceNum && ageLimit && raceClass && track && distance && weightType && horseCount && condition;
+    const isWordOk = w1 || w2 || w3;
+
+    if (isRaceConfigOk && isWordOk) {
+        // 全てOKなら消す
+        errorEl.classList.remove('show');
+        setTimeout(() => { if(!errorEl.classList.contains('show')) errorEl.innerText = ""; }, 500);
+        return true;
+    } else if (isRaceConfigOk && !isWordOk) {
+        // レース条件は揃ったが、ワードがまだの場合
+        // すでにエラーが出ている状態なら、メッセージだけ「ワード入力」に切り替える
+        if (errorEl.classList.contains('show')) {
+            errorEl.innerText = "エラー：最低1つのワードを入力してください。\nあなたの「勘」や「好きな言葉」が予想の種になります！";
+        }
+    } else if (!isRaceConfigOk) {
+        // まだレース条件が揃っていない場合
+        // （ここは現状維持。もしエラー表示中なら「未選択項目あり」のままにする）
+        if (errorEl.classList.contains('show')) {
+            errorEl.innerText = "エラー：未選択の項目があります。";
+        }
+    }
+    
+    return false;
+}
+
+function generatePrediction() {
+    // エラーメッセージ用要素を取得
+    const errorEl = document.getElementById('errorMessage');
+
+    // 内部用のエラー表示関数（定義を先頭に持ってくる）
+    const showError = (message) => {
+        errorEl.innerText = message;
+        errorEl.classList.add('show');
+        errorEl.scrollIntoView({behavior: 'smooth', block: 'center'});
+    };
+
+    // 1. 作成済みの validateInputs を呼び出す
+    const isValid = validateInputs();
+
+    // 2. 入力不足がある場合は、具体的なエラーを表示して終了
+    if (!isValid) {
+        const venue = document.getElementById('venue').value;
+        const raceNum = document.getElementById('raceNum').value;
+        const ageLimit = document.getElementById('ageLimit').value;
+        const raceClass = document.getElementById('raceClass').value;
+        const track = document.getElementById('track').value;
+        const distance = document.getElementById('distance').value;
+        const weightType = document.getElementById('weightType').value;
+        const horseCount = document.getElementById('horseCount').value;
+        const condition = document.getElementById('condition').value;
+        const w1 = document.getElementById('word1').value;
+        const w2 = document.getElementById('word2').value;
+        const w3 = document.getElementById('word3').value;
+
+        if (!venue || !raceNum || !ageLimit || !raceClass || !track || !distance || !weightType || !horseCount || !condition) {
+            showError("エラー：未選択の項目があります。");
+        }
+        else if (!w1 && !w2 && !w3) { 
+            showError("エラー：最低1つのワードを入力してください。\nあなたの「勘」や「好きな言葉」が予想の種になります！");
+        }
+        return; // 計算を中止
     }
 
-    // 3. ワード入力チェック
-    if (!w1 && !w2 && !w3) { 
-        alert("ワードを入力してください。あなたの「勘」や「好きな言葉」が予想の種になります！"); 
-        return; 
-    }
+    // --- 3. ここからは「入力が完璧な場合」の処理 ---
 
-    // 4. 計算処理の開始（ここからは既存のロジック）
+    // 入力値の再取得（計算用）
+    const date = document.getElementById('raceDate').value;
+    const venue = document.getElementById('venue').value;
+    const raceNum = document.getElementById('raceNum').value;
+    const track = document.getElementById('track').value;
+    const w1 = document.getElementById('word1').value;
+    const w2 = document.getElementById('word2').value;
+    const w3 = document.getElementById('word3').value;
+    const horseCount = document.getElementById('horseCount').value;
     const count = parseInt(horseCount);
+
+    // シード値の計算
     let seed = 0;
     const combined = date + venue + raceNum + 
                      document.getElementById('ageLimit').value + 
@@ -457,6 +559,7 @@ function generatePrediction() {
         seed = (seed + combined.charCodeAt(i) * (i + 1)) % 1000000;
     }
 
+    // シャッフルロジック
     let horses = Array.from({length: count}, (_, i) => i + 1);
     for (let i = horses.length - 1; i > 0; i--) {
         seed = (seed * 9301 + 49297) % 233280;
@@ -464,6 +567,7 @@ function generatePrediction() {
         [horses[i], horses[j]] = [horses[j], horses[i]];
     }
 
+    // 結果表示の構築
     const marks = [
         {t: "本命", s: "◎"}, {t: "対抗", s: "○"},
         {t: "単穴", s: "▲"}, {t: "連下", s: "△"}, {t: "星", s: "⭐︎"}
@@ -486,7 +590,6 @@ function generatePrediction() {
         let infoHtml = "";
         let lineText = `${marks[i].s} ${horseNum}番`;
 
-        // currentActiveRace を参照するように修正
         if (isRace && currentActiveRace) {
             const horse = currentActiveRace.horses[horseNum - 1] || { name: horseNum + "番", info: "", jockey: "" };
             infoHtml = `
