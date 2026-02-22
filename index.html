@@ -76,8 +76,8 @@
         .prediction-item:last-child { border-bottom: none; }
         .term { display: none; width: 45px; font-size: 0.75em; color: #7f8c8d; font-weight: bold; flex-shrink: 0; }
         .mark { width: 30px; font-weight: bold; font-size: 1.2em; text-align: center; flex-shrink: 0; }
-        .waku-box { width: 42px; height: 42px; border: 2px solid #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.4em; margin-left: 10px; flex-shrink: 0; }
-        .horse-info { margin-left: 12px; display: flex; flex-direction: column; min-width: 0; flex: 1;}
+        .waku-box { width: 30px; height: 30px; border: 2px solid #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em; margin-left: 10px; flex-shrink: 0; }
+        .horse-info { margin-left: 10px; display: flex; flex-direction: column; min-width: 0; flex: 1;}
         .horse-name { font-weight: bold; font-size: 1em; color: #2c3e50; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .jockey-name { font-size: 0.8em; color: #666; margin-top: 2px; }
                 
@@ -657,30 +657,29 @@ function generatePrediction() {
 }
 
 async function saveAsImage() {
+    // 予想結果のカード部分（白いボックス）だけをターゲットにする
     const target = document.querySelector("#result .prediction-card");
-    const items = document.querySelectorAll(".prediction-item");
     if (!target) return;
 
-    // --- 【保存用のスタイル一時調整】 ---
-    // 1. 全体幅をコンテンツに合わせる（右の余白を消す）
-    target.style.width = "max-content";
-    target.style.minWidth = "450px"; 
-
-    // 2. 各アイテムの左余白だけを増やす（保存される画像だけ左に寄せる）
-    items.forEach(item => {
-        item.style.paddingLeft = "60px";
-    });
-
     try {
+        // html2canvasがターゲット（カード部分）のサイズを自動認識して切り抜きます
         const canvas = await html2canvas(target, {
-            scale: 2,
-            backgroundColor: "#ffffff",
-            logging: false
+            scale: 2, // 鮮明に保存するための倍率
+            backgroundColor: "#ffffff", // 背景を白で固定
+            logging: false,
+            // 画面上の見た目（幅）をそのまま維持する設定
+            width: target.offsetWidth,
+            height: target.offsetHeight,
+            scrollX: 0,
+            scrollY: -window.scrollY, // スクロール位置によるズレを防止
+            useCORS: true
         });
 
+        // Canvasをファイル化
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         const file = new File([blob], `prediction_${new Date().getTime()}.png`, { type: 'image/png' });
 
+        // 共有・保存処理
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
                 files: [file],
@@ -692,13 +691,6 @@ async function saveAsImage() {
         }
     } catch (error) {
         console.error("Error sharing:", error);
-    } finally {
-        // --- 【スタイルを元の画面表示用に戻す】 ---
-        target.style.width = "";
-        target.style.minWidth = "";
-        items.forEach(item => {
-            item.style.paddingLeft = "15px"; // 画面表示用の padding に戻す
-        });
     }
 }
 
