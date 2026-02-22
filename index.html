@@ -17,8 +17,8 @@
     <title>🐎 ランダムワードで簡単競馬予想</title>
     <style>
         :root {
-            --theme-color: #a67c52;
-            --theme-hover: #8c6543;
+            --theme-color: #27ae60;
+            --theme-hover: #219150;
             --accent-color: #27ae60;
             --reset-color: #95a5a6;
             --copy-color: #34495e;
@@ -69,13 +69,20 @@
 
 <div class="container">
 
-    <h1 id="mainTitle">🐎 ランダムワードで簡単競馬予想</h1>
+    <h1 id="mainTitle">🏇 レース予想（汎用）</h1>
     
     <p style="text-align: center; font-size: 0.8em; color: #666; line-height: 1.6; margin-bottom: 20px; background: #f9f9f9; padding: 10px; border-radius: 6px; border-left: 4px solid var(--theme-color);">
         あなただけのランダムワードを入力してみよう！<br>
         条件を変更すれば他レースの予想もできるよ！<br>
         （他レースの場合、馬番のみの表示になります）
     </p>
+
+    <div class="form-group">
+        <label>今週の注目レース選択</label>
+        <select id="raceSelector" onchange="applySelectedRace()">
+            <option value="-1">-- 自分で設定する（汎用モード） --</option>
+            </select>
+    </div>
 
     <div class="form-group">
         <label>開催日</label>
@@ -85,6 +92,7 @@
     <div class="row">
         <div class="form-group"><label>競馬場</label>
             <select id="venue" onchange="checkRaceMode()">
+                <option value="">-- 選択 --</option>
                 <option>札幌</option><option>函館</option><option>新潟</option><option>福島</option>
                 <option selected>東京</option><option>中山</option><option>中京</option><option>京都</option>
                 <option>阪神</option><option>小倉</option>
@@ -92,6 +100,7 @@
         </div>
         <div class="form-group"><label>レース番号</label>
             <select id="raceNum" onchange="checkRaceMode()">
+                <option value="">-- 選択 --</option>
                 <script>for(let i=1;i<=12;i++){ const sel = (i===11?'selected':''); document.write(`<option value="${i}R" ${sel}>${i}R</option>`); }</script>
             </select>
         </div>
@@ -100,11 +109,13 @@
     <div class="row">
         <div class="form-group"><label>年齢限定</label>
             <select id="ageLimit" onchange="checkRaceMode()">
+                <option value="">-- 選択 --</option>
                 <option>2歳</option><option>3歳</option><option>3歳以上</option><option selected>4歳以上</option>
             </select>
         </div>
         <div class="form-group"><label>クラス</label>
             <select id="raceClass" onchange="checkRaceMode()">
+                <option value="">-- 選択 --</option>
                 <option selected>G1</option><option>G2</option><option>G3</option><option>OP(L)</option>
                 <option>オープン</option><option>3勝クラス</option><option>2勝クラス</option>
                 <option>1勝クラス</option><option>未勝利</option><option>新馬</option>
@@ -115,12 +126,14 @@
     <div class="row">
         <div class="form-group"><label>トラック</label>
             <select id="track" onchange="updateTheme(); checkRaceMode();">
+                <option value="">-- 選択 --</option>
                 <option value="芝">芝</option>
                 <option value="ダート" selected>ダート</option>
             </select>
         </div>
         <div class="form-group"><label>距離</label>
             <select id="distance" onchange="checkRaceMode()">
+                <option value="">-- 選択 --</option>
                 <script>
                     const dists = ['1000','1150','1200','1300','1400','1500','1600','1700','1800','1900','2000','2100','2200','2300','2400','2500','2600','3000','3200','3400','3600'];
                     dists.forEach(d => {
@@ -135,11 +148,13 @@
     <div class="row">
         <div class="form-group"><label>重量</label>
             <select id="weightType" onchange="checkRaceMode()">
+                <option value="">-- 選択 --</option>
                 <option selected>定量</option><option>別定</option><option>馬齢</option><option>ハンデ</option>
             </select>
         </div>
         <div class="form-group"><label>馬場状態</label>
             <select id="condition">
+                <option value="">-- 選択 --</option>
                 <option selected>良</option><option>稍重</option><option>重</option><option>不良</option>
             </select>
         </div>
@@ -148,6 +163,7 @@
     <div class="form-group">
         <label>出走頭数</label>
         <select id="horseCount" onchange="checkRaceMode()">
+            <option value="">-- 選択 --</option>
             <script>
                 for(let i=5; i<=18; i++) {
                     const selected = i === 16 ? 'selected' : '';
@@ -193,116 +209,241 @@
 
 <script>
 // ==========================================
-// 【今週のレース設定】ここを書き換えるだけでOK！
+// 【レース設定リスト】
 // ==========================================
-const CURRENT_RACE = {
-    title: "フェブラリーS 2026",
-    venue: "東京",
-    raceNum: "11R",
-    track: "ダート",
-    distance: "1600",
-    ageLimit: "4歳以上",
-    raceClass: "G1",
-    weightType: "定量",
-    horseCount: 16,
-    // 出走馬リスト
-    horses: [
-        { name: "オメガギネス", info: "牡6", jockey: "岩田康誠" },
-        { name: "ハッピーマン", info: "牡4", jockey: "高杉吏麒" },
-        { name: "ブライアンセンス", info: "牡6", jockey: "岩田望来" },
-        { name: "ペリエール", info: "牡6", jockey: "佐々木大" },
-        { name: "シックスペンス", info: "牡5", jockey: "戸崎圭太" },
-        { name: "ラムジェット", info: "牡5", jockey: "三浦皇成" },
-        { name: "ロングラン", info: "セ8", jockey: "荻野極" },
-        { name: "サクラトゥジュール", info: "セ9", jockey: "キング" },
-        { name: "ダブルハートボンド", info: "牝5", jockey: "坂井瑠星" },
-        { name: "ロードクロンヌ", info: "牡5", jockey: "横山和生" },
-        { name: "サンライズホーク", info: "セ7", jockey: "松岡正海" },
-        { name: "コスタノヴァ", info: "牡6", jockey: "ルメール" },
-        { name: "ナチュラルライズ", info: "牡4", jockey: "横山武史" },
-        { name: "ウィルソンテソーロ", info: "牡7", jockey: "川田将雅" },
-        { name: "ペプチドナイル", info: "牡8", jockey: "富田暁" },
-        { name: "サイモンザナドゥ", info: "牡6", jockey: "池添謙一" }
-    ]
-};
-// ==========================================
+const RACE_LIST = [
+    {
+        raceDate: "2026-02-22",
+        title: "フェブラリーS 2026",
+        venue: "東京",
+        raceNum: "11R",
+        track: "ダート",
+        distance: "1600",
+        ageLimit: "4歳以上",
+        raceClass: "G1",
+        weightType: "定量",
+        horseCount: 16,
+        horses: [
+            { name: "オメガギネス", info: "牡6", jockey: "岩田康誠" },
+            { name: "ハッピーマン", info: "牡4", jockey: "高杉吏麒" },
+            { name: "ブライアンセンス", info: "牡6", jockey: "岩田望来" },
+            { name: "ペリエール", info: "牡6", jockey: "佐々木大" },
+            { name: "シックスペンス", info: "牡5", jockey: "戸崎圭太" },
+            { name: "ラムジェット", info: "牡5", jockey: "三浦皇成" },
+            { name: "ロングラン", info: "セ8", jockey: "荻野極" },
+            { name: "サクラトゥジュール", info: "セ9", jockey: "キング" },
+            { name: "ダブルハートボンド", info: "牝5", jockey: "坂井瑠星" },
+            { name: "ロードクロンヌ", info: "牡5", jockey: "橫山和生" },
+            { name: "サンライズホーク", info: "セ7", jockey: "松岡正海" },
+            { name: "コスタノヴァ", info: "牡6", jockey: "ルメール" },
+            { name: "ナチュラルライズ", info: "牡4", jockey: "橫山武史" },
+            { name: "ウィルソンテソーロ", info: "牡7", jockey: "川田将雅" },
+            { name: "ペプチドナイル", info: "牡8", jockey: "富田暁" },
+            { name: "サイモンザナドゥ", info: "牡6", jockey: "池添謙一" }
+        ]
+    },
+    {
+        raceDate: "2026-02-22",
+        title: "小倉大賞典",
+        venue: "小倉",
+        raceNum: "11R",
+        track: "芝",
+        distance: "1800",
+        ageLimit: "4歳以上",
+        raceClass: "G3",
+        weightType: "ハンデ",
+        horseCount: 16,
+        horses: [
+            { name: "マテンロウオリオン", info: "牡7", jockey: "橫山典弘" },
+            { name: "ビーアストニッシド", info: "牡7", jockey: "西村太一" },
+            { name: "エアファンディタ", info: "セ9", jockey: "亀田温心" },
+            { name: "ショウナンアデイブ", info: "牡7", jockey: "丸山元気" },
+            { name: "ヘリオス", info: "セ10", jockey: "菊沢一樹" },
+            { name: "バレハ", info: "牝5", jockey: "鮫島克駿" },
+            { name: "シルトホルン", info: "牡6", jockey: "石田拓郎" },
+            { name: "ラケーマダ", info: "牡6", jockey: "丹内祐次" },
+            { name: "ナムラエイハブ", info: "牡5", jockey: "吉田隼人" },
+            { name: "ケイアイセナ", info: "牡7", jockey: "藤岡佑介" },
+            { name: "エピファニー", info: "牡7", jockey: "杉原誠人" },
+            { name: "センツブライト", info: "牡4", jockey: "団野大成" },
+            { name: "ガイアメンテ", info: "牡5", jockey: "北村友一" },
+            { name: "エラトー", info: "牝5", jockey: "斎藤新" },
+            { name: "リカンカブール", info: "セ7", jockey: "浜中俊" },
+            { name: "タガノデュード", info: "牡5", jockey: "古川吉洋" }
+        ]
+    }
+];
 
-
-let isFebStakes = true;
+let isRace = false;
+let currentActiveRace = null; // 現在選択・一致しているレースデータ
 let currentPredictionText = "";
 
 window.onload = function() {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('raceDate').value = today;
-    // ボタンのテキストを「リセット（レース名）」に書き換える
-    document.getElementById('resetBtn').innerText = `リセット（${CURRENT_RACE.title}）`;
-    checkRaceMode();
+
+    const selector = document.getElementById('raceSelector');
+    RACE_LIST.forEach((race, index) => {
+        const opt = document.createElement('option');
+        opt.value = index;
+        opt.innerText = race.title;
+        selector.appendChild(opt);
+    });
+
+    selector.value = "-1"; // デフォルトは「自分で設定する」
+    applySelectedRace("-1");
 };
 
+// 選択されたレースの情報を入力欄に反映する
+function applySelectedRace(forcedIndex = null) {
+    const selector = document.getElementById('raceSelector');
+    const index = forcedIndex !== null ? forcedIndex : selector.value;
+    
+    // --- 「自分で設定する」を選んだ場合の処理 ---
+    if (index === "-1") {
+        // 全ての入力を初期化・クリアする
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('raceDate').value = today; // 日付は今日にリセット
+        document.getElementById('venue').value = "";
+        document.getElementById('raceNum').value = "";
+        document.getElementById('ageLimit').value = "";
+        document.getElementById('raceClass').value = "";
+        document.getElementById('track').value = ""; // 一旦「芝」へ
+        document.getElementById('distance').value = "";
+        document.getElementById('weightType').value = "";
+        document.getElementById('condition').value = "";
+        document.getElementById('horseCount').value = "";
+        
+        // ワード入力欄も空にする
+        document.getElementById('word1').value = "";
+        document.getElementById('word2').value = "";
+        document.getElementById('word3').value = "";
+
+        updateTheme(); // テーマ色（芝/ダート）を反映
+        checkRaceMode(); // タイトルを「汎用」へ切り替え
+        return;
+    }
+    
+    // --- 特定のレースを選んだ場合の処理 ---
+    const race = RACE_LIST[index];
+    document.getElementById('raceDate').value = race.raceDate;
+    document.getElementById('venue').value = race.venue;
+    document.getElementById('raceNum').value = race.raceNum;
+    document.getElementById('ageLimit').value = race.ageLimit;
+    document.getElementById('raceClass').value = race.raceClass;
+    document.getElementById('track').value = race.track;
+    document.getElementById('distance').value = race.distance;
+    document.getElementById('weightType').value = race.weightType;
+    document.getElementById('horseCount').value = race.horseCount;
+
+    document.getElementById('word1').value = "";
+    document.getElementById('word2').value = "";
+    document.getElementById('word3').value = "";
+    
+    updateTheme();
+    checkRaceMode();
+    document.getElementById('resetBtn').innerText = `リセット（${race.title}）`;
+}
+
 function checkRaceMode() {
+    const raceDate = document.getElementById('raceDate').value;
     const venue = document.getElementById('venue').value;
     const raceNum = document.getElementById('raceNum').value;
     const track = document.getElementById('track').value;
     const distance = document.getElementById('distance').value;
     const weight = document.getElementById('weightType').value;
     const count = document.getElementById('horseCount').value;
-    const raceClass = document.getElementById('raceClass').value;
 
-    // 定義したレース情報と一致するか判定
-    isFebStakes = (venue === CURRENT_RACE.venue && 
-                   raceNum === CURRENT_RACE.raceNum && 
-                   track === CURRENT_RACE.track && 
-                   distance === CURRENT_RACE.distance && 
-                   parseInt(count) === CURRENT_RACE.horseCount &&
-                   weight === CURRENT_RACE.weightType &&
-                   raceClass === CURRENT_RACE.raceClass);
+    const foundRace = RACE_LIST.find(race => 
+        race.raceDate === raceDate && 
+        race.venue === venue && 
+        race.raceNum === raceNum &&
+        race.track === track &&
+        race.distance === distance &&
+        parseInt(count) === race.horseCount
+    );
 
-    document.getElementById('mainTitle').innerText = isFebStakes ? `🏆 ${CURRENT_RACE.title}` : "🏇 レース予想（汎用）";
-    // 条件が変わったらコピーボタンを隠す
+    const resetBtn = document.getElementById('resetBtn'); // リセットボタンを取得
+
+    if (foundRace) {
+        isRace = true;
+        currentActiveRace = foundRace;
+        document.getElementById('mainTitle').innerText = `🏆 ${foundRace.title}`;
+        resetBtn.style.display = "none"; // レースモードのときはリセットボタンを非表示
+    } else {
+        isRace = false;
+        currentActiveRace = null;
+        document.getElementById('mainTitle').innerText = "🏇 レース予想（汎用）";
+        // 汎用モードの時だけリセットボタンを表示する
+        resetBtn.style.display = "block";
+        resetBtn.innerText = "リセット";
+    }
+    
     document.getElementById('copyBtn').style.display = "none";
     document.getElementById('xBtn').style.display = "none";
-    document.getElementById('saveBtn').style.display = "none"; }
+    document.getElementById('saveBtn').style.display = "none"; 
+    document.getElementById('result').innerHTML = "";
+}
 
 function resetToDefault() {
-    document.getElementById('venue').value = CURRENT_RACE.venue;
-    document.getElementById('raceNum').value = CURRENT_RACE.raceNum;
-    document.getElementById('ageLimit').value = CURRENT_RACE.ageLimit;
-    document.getElementById('raceClass').value = CURRENT_RACE.raceClass;
-    document.getElementById('track').value = CURRENT_RACE.track;
-    document.getElementById('distance').value = CURRENT_RACE.distance;
-    document.getElementById('weightType').value = CURRENT_RACE.weightType;
-    document.getElementById('horseCount').value = CURRENT_RACE.horseCount;
-    document.getElementById('word1').value = "";
-    document.getElementById('word2').value = "";
-    document.getElementById('word3').value = "";
-    updateTheme();
-    checkRaceMode();
-    document.getElementById('result').innerHTML = "";
+    const selector = document.getElementById('raceSelector');
+    const index = selector.value;
+    
+    if (index !== "-1") {
+        applySelectedRace(index);
+    } else {
+        document.getElementById('word1').value = "";
+        document.getElementById('word2').value = "";
+        document.getElementById('word3').value = "";
+        checkRaceMode();
+    }
 }
 
 function updateTheme() {
     const track = document.getElementById('track').value;
     const root = document.documentElement;
-    if (track === "芝") {
-        root.style.setProperty('--theme-color', '#27ae60');
-        root.style.setProperty('--theme-hover', '#219150');
-    } else {
+    
+    // ダートが選ばれている時だけ茶色、それ以外（芝 or 未選択）は緑
+    if (track === "ダート") {
         root.style.setProperty('--theme-color', '#a67c52');
         root.style.setProperty('--theme-hover', '#8c6543');
+    } else {
+        root.style.setProperty('--theme-color', '#27ae60');
+        root.style.setProperty('--theme-hover', '#219150');
     }
 }
 
 function generatePrediction() {
-    const count = parseInt(document.getElementById('horseCount').value);
+    // 1. 各入力を取得（ここで1回だけ宣言する）
     const date = document.getElementById('raceDate').value;
     const venue = document.getElementById('venue').value;
     const raceNum = document.getElementById('raceNum').value;
+    const ageLimit = document.getElementById('ageLimit').value;
+    const raceClass = document.getElementById('raceClass').value;
+    const track = document.getElementById('track').value;
+    const distance = document.getElementById('distance').value;
+    const weightType = document.getElementById('weightType').value;
+    const condition = document.getElementById('condition').value;
+    const horseCount = document.getElementById('horseCount').value;
+
     const w1 = document.getElementById('word1').value;
     const w2 = document.getElementById('word2').value;
     const w3 = document.getElementById('word3').value;
-    
-    if(!w1 && !w2 && !w3) { alert("ワードを入力してください"); return; }
 
+    // 2. バリデーションチェック（空のものがないか確認）
+    if (!venue || !raceNum || !ageLimit || !raceClass || !track || !distance || !weightType || !horseCount || !condition) {
+        alert("エラー：選択していない項目があります。全て選択してから再度お試しください。");
+        return;
+    }
+
+    // 3. ワード入力チェック
+    if (!w1 && !w2 && !w3) { 
+        alert("ワードを入力してください。あなたの「勘」や「好きな言葉」が予想の種になります！"); 
+        return; 
+    }
+
+    // 4. 計算処理の開始（ここからは既存のロジック）
+    const count = parseInt(horseCount);
     let seed = 0;
     const combined = date + venue + raceNum + 
                      document.getElementById('ageLimit').value + 
@@ -345,8 +486,9 @@ function generatePrediction() {
         let infoHtml = "";
         let lineText = `${marks[i].s} ${horseNum}番`;
 
-        if (isFebStakes) {
-            const horse = CURRENT_RACE.horses[horseNum - 1] || { name: horseNum + "番", info: "", jockey: "" };
+        // currentActiveRace を参照するように修正
+        if (isRace && currentActiveRace) {
+            const horse = currentActiveRace.horses[horseNum - 1] || { name: horseNum + "番", info: "", jockey: "" };
             infoHtml = `
                 <div class="horse-info">
                     <div class="horse-name">${horse.name}（${horse.info}）</div>
@@ -367,19 +509,17 @@ function generatePrediction() {
     
     document.getElementById('result').innerHTML = html + "</div>";
     currentPredictionText = copyText + "\n#ランダムワードで簡単競馬予想";
-    document.getElementById('saveBtn').style.display = "block"; // 画像保存ボタンを表示
-    document.getElementById('xBtn').style.display = "block"; // X投稿ボタンを表示
-    document.getElementById('copyBtn').style.display = "block"; // コピーボタンを表示
+    document.getElementById('saveBtn').style.display = "block";
+    document.getElementById('xBtn').style.display = "block";
+    document.getElementById('copyBtn').style.display = "block";
 }
 
 function saveAsImage() {
     const target = document.querySelector("#result .prediction-card");
     if (!target) return;
-
-    // 画像生成
     html2canvas(target, {
-        scale: 2, // 高画質にする
-        backgroundColor: "#ffffff" // 背景色を白で固定
+        scale: 2,
+        backgroundColor: "#ffffff"
     }).then(canvas => {
         const link = document.createElement("a");
         link.download = `prediction_${new Date().getTime()}.png`;
@@ -398,7 +538,7 @@ function copyResult() {
     navigator.clipboard.writeText(currentPredictionText).then(() => {
         alert("予想結果をコピーしました！SNS等に貼り付けてください。");
     }).catch(err => {
-        alert("コピーに失敗しました。手動で選択してコピーしてください。");
+        alert("コピーに失敗しました。");
     });
 }
 
