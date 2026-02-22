@@ -67,20 +67,19 @@
             display: flex; 
             align-items: center; 
             justify-content: flex-start; 
-            padding: 25px 20px; 
+            padding: 12px 15px; 
             border-bottom: 1px solid #eee;
             min-width: 320px; /* ★スマホでも画像化の際に潰れない最低幅を確保 */
-            min-height: 100px;
             box-sizing: border-box;
         }
 
         .prediction-item:last-child { border-bottom: none; }
         .term { width: 45px; font-size: 0.75em; color: #7f8c8d; font-weight: bold; flex-shrink: 0; }
-        .mark { width: 40px; font-weight: bold; font-size: 1.5em; text-align: center; flex-shrink: 0; }
-        .waku-box { width: 50px; height: 50px; border: 2px solid #333; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.6em; margin-left: 10px; flex-shrink: 0; }
-        .horse-info { margin-left: 18px; display: flex; flex-direction: column; min-width: 0; flex: 1;}
-        .horse-name { font-weight: bold; font-size: 1.1em; color: #2c3e50; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .jockey-name { font-size: 0.9em; color: #777; margin-top: 6px; }
+        .mark { width: 30px; font-weight: bold; font-size: 1.2em; text-align: center; flex-shrink: 0; }
+        .waku-box { width: 42px; height: 42px; border: 2px solid #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.4em; margin-left: 10px; flex-shrink: 0; }
+        .horse-info { margin-left: 12px; display: flex; flex-direction: column; min-width: 0; flex: 1;}
+        .horse-name { font-weight: bold; font-size: 1em; color: #2c3e50; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .jockey-name { font-size: 0.8em; color: #666; margin-top: 2px; }
                 
         #errorMessage {
             text-align: center;
@@ -610,7 +609,7 @@ function generatePrediction() {
 
     // 結果表示の構築
     const marks = [
-        {t: "本命", s: "◎"}, {t: "対抗", s: "◯"},
+        {t: "本命", s: "◎"}, {t: "対抗", s: "○"},
         {t: "単穴", s: "▲"}, {t: "連下", s: "△"}, {t: "星", s: "⭐︎"}
     ];
 
@@ -662,29 +661,25 @@ async function saveAsImage() {
     const target = document.querySelector("#result .prediction-card");
     if (!target) return;
 
-    // 1行を高くしたので、幅を450px程度にすると正方形に近くなります
-    const fixedWidth = 450; 
-    
+    // 見切れ防止：一時的に幅を固定
     const originalWidth = target.style.width;
-    const originalMinWidth = target.style.minWidth;
-
-    target.style.width = fixedWidth + "px";
-    target.style.minWidth = fixedWidth + "px";
+    target.style.width = "600px";
 
     try {
         const canvas = await html2canvas(target, {
             scale: 2,
             backgroundColor: "#ffffff",
-            width: fixedWidth,
-            windowWidth: fixedWidth
+            width: 600,
+            windowWidth: 600
         });
 
-        target.style.width = originalWidth;
-        target.style.minWidth = originalMinWidth;
+        target.style.width = originalWidth; // 幅を元に戻す
 
+        // 1. CanvasをBlob形式（ファイルデータ）に変換
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         const file = new File([blob], `prediction_${new Date().getTime()}.png`, { type: 'image/png' });
 
+        // 2. Web Share API が使えるか、かつファイルの共有が可能かチェック
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
                 files: [file],
@@ -692,11 +687,13 @@ async function saveAsImage() {
                 text: currentPredictionText
             });
         } else {
+            // 3. Web Share APIが使えない場合（PCや一部のブラウザ）
+            // 前回の「デバイス判別ロジック」へ飛ばす
             handleFallbackSave(canvas.toDataURL("image/png"));
         }
     } catch (error) {
-        console.error("Error:", error);
-        target.style.width = originalWidth;
+        console.error("Error sharing:", error);
+        alert("画像の生成または共有に失敗しました。");
     }
 }
 
