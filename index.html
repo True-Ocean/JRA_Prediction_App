@@ -6,15 +6,15 @@
 
     <meta property="og:url" content="https://true-ocean.github.io/JRA_Prediction_App/">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="🏆 フェブラリーS 2026 予想ツール">
+    <meta property="og:title" content="🐎 ランダムワードで簡単競馬予想">
     <meta property="og:description" content="好きな言葉を種にして、自分だけの競馬予想を算出！">
     <meta property="og:image" content="https://true-ocean.github.io/JRA_Prediction_App/image.png">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="🏆 フェブラリーS 2026 予想ツール">
+    <meta name="twitter:title" content="🐎 ランダムワードで簡単競馬予想">
     <meta name="twitter:description" content="好きな言葉を種にして、自分だけの競馬予想を算出！">
 
-    <title>競馬予想ツール（フェブラリーS）</title>
+    <title>🐎 ランダムワードで簡単競馬予想</title>
     <style>
         :root {
             --theme-color: #a67c52;
@@ -62,15 +62,19 @@
         .jockey-name { font-size: 0.8em; color: #666; margin-top: 2px; }
     </style>
 </head>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <body>
 
 <div class="container">
 
-    <h1 id="mainTitle">🏆 フェブラリーS 2026 🐎</h1>
+    <h1 id="mainTitle">🐎 ランダムワードで簡単競馬予想</h1>
     
-    <p style="text-align: center; font-size: 0.85em; color: #666; line-height: 1.6; margin-bottom: 20px; background: #f9f9f9; padding: 10px; border-radius: 6px; border-left: 4px solid var(--theme-color);">
+    <p style="text-align: center; font-size: 0.8em; color: #666; line-height: 1.6; margin-bottom: 20px; background: #f9f9f9; padding: 10px; border-radius: 6px; border-left: 4px solid var(--theme-color);">
         あなただけのランダムワードを入力してみよう！<br>
-        条件を変更すれば他レースの予想もできるよ！
+        条件を変更すれば他レースの予想もできるよ！<br>
+        （他レースの場合、馬番のみの表示になります）
     </p>
 
     <div class="form-group">
@@ -136,7 +140,7 @@
         </div>
         <div class="form-group"><label>馬場状態</label>
             <select id="condition">
-                <option selected>良</option><option>稍</option><option>重</option><option>不</option>
+                <option selected>良</option><option>稍重</option><option>重</option><option>不良</option>
             </select>
         </div>
     </div>
@@ -154,7 +158,7 @@
     </div>
 
     <div class="form-group">
-        <label>好きなランダムワード（最大3つ）</label>
+        <label>お好みのランダムワード（最大3つ）</label>
         <div class="word-inputs">
             <input type="text" id="word1" placeholder="ワード1">
             <input type="text" id="word2" placeholder="ワード2">
@@ -164,10 +168,16 @@
 
     <div class="button-stack">
         <button class="btn-predict" onclick="generatePrediction()">予想を算出する</button>
-        <button class="btn-copy" id="copyBtn" onclick="copyResult()">結果をクリップボードにコピー</button>
-        <button class="btn-reset" onclick="resetToDefault()">リセット（フェブラリーS）</button>
+        <button class="btn-reset" id="resetBtn" onclick="resetToDefault()">リセット</button>
     </div>
+
     <div id="result"></div>
+
+    <div class="button-stack">
+        <button class="btn-save" id="saveBtn" onclick="saveAsImage()" style="background: #FF77FF; display: none;">予想結果を画像で保存</button>
+        <button class="btn-x" id="xBtn" onclick="postToX()" style="background: #000; display: none;">予想結果を X にポスト</button>
+        <button class="btn-copy" id="copyBtn" onclick="copyResult()">予想結果をクリップボードにコピー</button>
+    </div>
 
     <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; color: #888; font-size: 0.7em; line-height: 1.5;">
         <p style="margin-bottom: 10px;">
@@ -224,6 +234,8 @@ let currentPredictionText = "";
 window.onload = function() {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('raceDate').value = today;
+    // ボタンのテキストを「リセット（レース名）」に書き換える
+    document.getElementById('resetBtn').innerText = `リセット（${CURRENT_RACE.title}）`;
     checkRaceMode();
 };
 
@@ -245,11 +257,11 @@ function checkRaceMode() {
                    weight === CURRENT_RACE.weightType &&
                    raceClass === CURRENT_RACE.raceClass);
 
-    // 違うG1になれば、ここのタイトルを変更すること=============================================================================
-    document.getElementById('mainTitle').innerText = isFebStakes ? `🏆 ${CURRENT_RACE.title}` : "🏇 レース予想 (汎用)";
+    document.getElementById('mainTitle').innerText = isFebStakes ? `🏆 ${CURRENT_RACE.title}` : "🏇 レース予想（汎用）";
     // 条件が変わったらコピーボタンを隠す
     document.getElementById('copyBtn').style.display = "none";
-}
+    document.getElementById('xBtn').style.display = "none";
+    document.getElementById('saveBtn').style.display = "none"; }
 
 function resetToDefault() {
     document.getElementById('venue').value = CURRENT_RACE.venue;
@@ -354,8 +366,32 @@ function generatePrediction() {
     }
     
     document.getElementById('result').innerHTML = html + "</div>";
-    currentPredictionText = copyText + "\n#ランダムワードで簡単競馬予想 ";
+    currentPredictionText = copyText + "\n#ランダムワードで簡単競馬予想";
+    document.getElementById('saveBtn').style.display = "block"; // 画像保存ボタンを表示
+    document.getElementById('xBtn').style.display = "block"; // X投稿ボタンを表示
     document.getElementById('copyBtn').style.display = "block"; // コピーボタンを表示
+}
+
+function saveAsImage() {
+    const target = document.querySelector("#result .prediction-card");
+    if (!target) return;
+
+    // 画像生成
+    html2canvas(target, {
+        scale: 2, // 高画質にする
+        backgroundColor: "#ffffff" // 背景色を白で固定
+    }).then(canvas => {
+        const link = document.createElement("a");
+        link.download = `prediction_${new Date().getTime()}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    });
+}
+
+function postToX() {
+    const text = encodeURIComponent(currentPredictionText);
+    const url = `https://twitter.com/intent/tweet?text=${text}`;
+    window.open(url, '_blank');
 }
 
 function copyResult() {
