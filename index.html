@@ -684,7 +684,7 @@ async function saveAsImage() {
             await navigator.share({
                 files: [file],
                 title: '競馬予想結果',
-                text: 'ランダムワードで予想した結果です！ #ランダムワードで簡単競馬予想'
+                text: currentPredictionText
             });
         } else {
             // 3. Web Share APIが使えない場合（PCや一部のブラウザ）
