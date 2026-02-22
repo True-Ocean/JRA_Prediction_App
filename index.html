@@ -657,46 +657,62 @@ function generatePrediction() {
     document.getElementById('copyBtn').style.display = "block";
 }
 
-function saveAsImage() {
+async function saveAsImage() {
     const target = document.querySelector("#result .prediction-card");
     if (!target) return;
 
-    // 見切れ防止の一時的な幅固定
+    // 見切れ防止：一時的に幅を固定
     const originalWidth = target.style.width;
     target.style.width = "600px";
 
-    html2canvas(target, {
-        scale: 2,
-        backgroundColor: "#ffffff",
-        width: 600,
-        windowWidth: 600
-    }).then(canvas => {
+    try {
+        const canvas = await html2canvas(target, {
+            scale: 2,
+            backgroundColor: "#ffffff",
+            width: 600,
+            windowWidth: 600
+        });
+
         target.style.width = originalWidth; // 幅を元に戻す
-        const imageData = canvas.toDataURL("image/png");
 
-        // --- デバイス判別ロジック ---
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        // 1. CanvasをBlob形式（ファイルデータ）に変換
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const file = new File([blob], `prediction_${new Date().getTime()}.png`, { type: 'image/png' });
 
-        if (isMobile) {
-            // スマホの場合：プレビュー表示（長押し保存を促す）
-            const modal = document.getElementById('imageModal');
-            const previewImg = document.getElementById('previewImage');
-            previewImg.src = imageData;
-            modal.style.display = 'flex';
+        // 2. Web Share API が使えるか、かつファイルの共有が可能かチェック
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                files: [file],
+                title: '競馬予想結果',
+                text: 'ランダムワードで予想した結果です！ #ランダムワードで簡単競馬予想'
+            });
         } else {
-            // PCの場合：より確実なダウンロード処理
-            const fileName = `prediction_${new Date().getTime()}.png`;
-            const link = document.createElement("a");
-            
-            link.href = imageData;
-            link.download = fileName;
-            
-            // 一時的にドキュメントに追加（ブラウザの挙動を安定させるため）
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link); // 終わったらすぐ消す
+            // 3. Web Share APIが使えない場合（PCや一部のブラウザ）
+            // 前回の「デバイス判別ロジック」へ飛ばす
+            handleFallbackSave(canvas.toDataURL("image/png"));
         }
-    });
+    } catch (error) {
+        console.error("Error sharing:", error);
+        alert("画像の生成または共有に失敗しました。");
+    }
+}
+
+// フォールバック（共有機能がないブラウザ用）
+function handleFallbackSave(imageData) {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+        const modal = document.getElementById('imageModal');
+        const previewImg = document.getElementById('previewImage');
+        previewImg.src = imageData;
+        modal.style.display = 'flex';
+    } else {
+        const link = document.createElement("a");
+        link.download = `prediction_${new Date().getTime()}.png`;
+        link.href = imageData;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 }
 
 function postToX() {
