@@ -67,7 +67,7 @@
             display: flex; 
             align-items: center; 
             justify-content: flex-start; 
-            padding: 12px 15px; 
+            padding: 15px 15px 15px 60px; 
             border-bottom: 1px solid #eee;
             min-width: 320px; /* ★スマホでも画像化の際に潰れない最低幅を確保 */
             box-sizing: border-box;
@@ -660,25 +660,23 @@ async function saveAsImage() {
     const target = document.querySelector("#result .prediction-card");
     if (!target) return;
 
-    // 見切れ防止：一時的に幅を固定
+    // 余白を詰めるため、一時的に幅をコンテンツに合わせる
     const originalWidth = target.style.width;
-    target.style.width = "600px";
+    target.style.width = "max-content";
+    target.style.minWidth = "450px"; // ある程度の横長感を出すための最低幅
 
     try {
         const canvas = await html2canvas(target, {
             scale: 2,
             backgroundColor: "#ffffff",
-            width: 600,
-            windowWidth: 600
+            logging: false
         });
 
-        target.style.width = originalWidth; // 幅を元に戻す
-
-        // 1. CanvasをBlob形式（ファイルデータ）に変換
+        // 1. CanvasをBlob形式に変換
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         const file = new File([blob], `prediction_${new Date().getTime()}.png`, { type: 'image/png' });
 
-        // 2. Web Share API が使えるか、かつファイルの共有が可能かチェック
+        // 2. 共有処理
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
                 files: [file],
@@ -686,16 +684,14 @@ async function saveAsImage() {
                 text: currentPredictionText
             });
         } else {
-            // 3. Web Share APIが使えない場合（PCや一部のブラウザ）
-            // 前回の「デバイス判別ロジック」へ飛ばす
             handleFallbackSave(canvas.toDataURL("image/png"));
         }
     } catch (error) {
         console.error("Error sharing:", error);
-
     } finally {
-        // 成功しても失敗しても、最後に必ずスタイルを元に戻す
+        // スタイルを元に戻す
         target.style.width = originalWidth;
+        target.style.minWidth = "";
     }
 }
 
