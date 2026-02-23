@@ -140,7 +140,7 @@
 
 <div class="container">
 
-    <h1 id="mainTitle">🏇 メインレース以外</h1>
+    <h1 id="mainTitle">🏇 汎用モード 🏇</h1>
     
     <p id="genericWarning" style="text-align: center; font-size: 0.8em; color: #666; line-height: 1.6; margin-bottom: 20px; background: #f9f9f9; padding: 10px; border-radius: 6px; border-left: 4px solid var(--theme-color);">
         レース条件を選択して、予想の種を蒔いてね！<br>
@@ -150,7 +150,7 @@
     <div class="form-group">
         <label>レース選択</label>
         <select id="raceSelector" onchange="applySelectedRace()">
-            <option value="-1">メインレース以外（汎用モード）</option>
+            <option value="-1">自分でレース条件選択</option>
         </select>
     </div>
 
@@ -475,7 +475,7 @@ function checkRaceMode() {
     } else {
         isRace = false;
         currentActiveRace = null;
-        document.getElementById('mainTitle').innerText = "🏇 メインレース以外 🏇";
+        document.getElementById('mainTitle').innerText = "🏇 汎用モード 🏇";
         resetBtn.style.display = "block";
         resetBtn.innerText = "リセット";
     }
