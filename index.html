@@ -6,16 +6,16 @@
 
     <meta property="og:url" content="https://true-ocean.github.io/JRA_Prediction_App/">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="🐎 ランダムワードで簡単競馬予想">
-    <meta property="og:description" content="好きな言葉を種にして、自分だけの簡単競馬予想！">
-    <meta property="og:image" content="https://true-ocean.github.io/JRA_Prediction_App/image.jpg">
+    <meta property="og:title" content="🐎 予想の種で簡単お馬選び！">
+    <meta property="og:description" content="好きな言葉を種にして、あなただけの馬を選ぼう！">
+    <meta property="og:image" content="https://true-ocean.github.io/JRA_Prediction_App/app_image.png">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="🐎 ランダムワードで簡単競馬予想">
-    <meta name="twitter:description" content="好きな言葉を種にして、自分だけの簡単競馬予想！">
-    <meta name="twitter:image" content="https://true-ocean.github.io/JRA_Prediction_App/image.jpg">
+    <meta name="twitter:title" content="🐎 予想の種で簡単お馬選び！">
+    <meta name="twitter:description" content="好きな言葉を種にして、あなただけの馬を選ぼう！">
+    <meta name="twitter:image" content="https://true-ocean.github.io/JRA_Prediction_App/app_image.png">
 
-    <title>🐎 ランダムワードで簡単競馬予想！</title>
+    <title>🐎 予想の種で簡単お馬選び！</title>
     <style>
         :root {
             --theme-color: #27ae60;
@@ -81,7 +81,7 @@
         .btn-copy { background: var(--copy-color); display: none; }
         button:active { transform: scale(0.98); }
 
-        /* 予想結果 */
+        /* 結果表示 */
         #result { margin-top: 25px; }
         .prediction-card { border: 1px solid #ddd; border-radius: 8px; background: #fff; overflow: hidden; }
 
@@ -135,22 +135,22 @@
 <body>
 
 <div class="top-banner" id="topBanner">
-    🏇 ランダムワードで簡単競馬予想！
+    🏇 予想の種を蒔いて簡単お馬選び！🏇
 </div>
 
 <div class="container">
 
-    <h1 id="mainTitle">🏇 レース予想（汎用）</h1>
+    <h1 id="mainTitle">🏇 メインレース以外（汎用モード）</h1>
     
-    <p style="text-align: center; font-size: 0.8em; color: #666; line-height: 1.6; margin-bottom: 20px; background: #f9f9f9; padding: 10px; border-radius: 6px; border-left: 4px solid var(--theme-color);">
-        あなただけのランダムワードで簡単競馬予想！<br>
-        ⚠️ 汎用モードでは馬番のみの出力になります
+    <p id="genericWarning" style="text-align: center; font-size: 0.8em; color: #666; line-height: 1.6; margin-bottom: 20px; background: #f9f9f9; padding: 10px; border-radius: 6px; border-left: 4px solid var(--theme-color);">
+        レース条件を選択して、予想の種を蒔いてね！<br>
+        ⚠️ 結果は馬番のみで、馬名は出力されません
     </p>
 
     <div class="form-group">
         <label>レース選択</label>
         <select id="raceSelector" onchange="applySelectedRace()">
-            <option value="-1">汎用モード：自分で条件選択</option>
+            <option value="-1">メインレース以外（汎用モード）</option>
         </select>
     </div>
 
@@ -246,33 +246,33 @@
     </div>
 
     <div class="form-group">
-        <label>お好みのランダムワード（最大3つ）</label>
+        <label>予想の種（好きな言葉などを3つまで）</label>
         <div class="word-inputs">
-            <input type="text" id="word1" placeholder="ワード1" oninput="validateInputs()">
-            <input type="text" id="word2" placeholder="ワード2" oninput="validateInputs()">
-            <input type="text" id="word3" placeholder="ワード3" oninput="validateInputs()">
+            <input type="text" id="word1" placeholder="種1" oninput="validateInputs()">
+            <input type="text" id="word2" placeholder="種2" oninput="validateInputs()">
+            <input type="text" id="word3" placeholder="種3" oninput="validateInputs()">
         </div>
     </div>
 
     <div id="errorMessage"></div>
 
     <div class="button-stack">
-        <button class="btn-predict" onclick="generatePrediction()">予想結果を出力！</button>
+        <button class="btn-predict" onclick="generatePrediction()">予想の種を蒔く！</button>
         <button class="btn-reset" id="resetBtn" onclick="resetToDefault()">リセット</button>
     </div>
 
     <div id="result"></div>
 
     <div class="button-stack">
-        <button class="btn-save" id="saveBtn" onclick="saveAsImage()" style="background: #FF77FF; display: none;">予想結果を画像で保存・共有</button>
-        <button class="btn-x" id="xBtn" onclick="postToX()" style="background: #000; display: none;">予想結果を X にポスト（画像なし）</button>
-        <button class="btn-copy" id="copyBtn" onclick="copyResult()">予想結果をクリップボードにコピー</button>
+        <button class="btn-save" id="saveBtn" onclick="saveAsImage()" style="background: #FF77FF; display: none;">結果を画像で保存・共有</button>
+        <button class="btn-x" id="xBtn" onclick="postToX()" style="background: #000; display: none;">結果を X にポスト（画像なし）</button>
+        <button class="btn-copy" id="copyBtn" onclick="copyResult()">結果をクリップボードにコピー</button>
     </div>
 
     <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; color: #888; font-size: 0.7em; line-height: 1.5;">
         <p style="margin-bottom: 10px;">
-            Disclaimer: This application is for informational purposes only. It does not provide financial or betting advice. Users are responsible for their own decisions.<br>
-            免責事項：本プラットフォームは情報提供を目的としており、金融または賭博に関するアドバイスを提供するものではありません。利用者は自己の判断に基づいて行動する責任があります。
+            Disclaimer: This application is for entertainment purposes only. It does not provide financial or betting advice. Users are responsible for their own decisions.<br>
+            免責事項：本プラットフォームは娯楽提供を目的としたものであり、金融または勝馬投票（賭博）に関する助言を提供するものではありません。利用者は自己の責任において本アプリを使用するものとします。
         </p>
         <p style="text-align: center; font-weight: bold;">
             Created by <a href="#" style="color: #666; text-decoration: none;">シャノワール</a>. All rights reserved.
@@ -433,6 +433,7 @@ function applySelectedRace(forcedIndex = null) {
 }
 
 function checkRaceMode() {
+    const raceSelector = document.getElementById('raceSelector'); // セレクトボックスの状態を取得
     const raceDate = document.getElementById('raceDate').value;
     const venue = document.getElementById('venue').value;
     const raceNum = document.getElementById('raceNum').value;
@@ -440,6 +441,7 @@ function checkRaceMode() {
     const distance = document.getElementById('distance').value;
     const weight = document.getElementById('weightType').value;
     const count = document.getElementById('horseCount').value;
+    const warningEl = document.getElementById('genericWarning');   // 注意書き要素を取得
 
     const foundRace = RACE_LIST.find(race => 
         race.raceDate === raceDate && 
@@ -452,6 +454,19 @@ function checkRaceMode() {
 
     const resetBtn = document.getElementById('resetBtn');
 
+    // --- テキスト出し分けロジック ---
+    if (raceSelector.value === "-1") {
+        // 汎用モード
+        warningEl.style.display = "block";
+        warningEl.innerText = "レース条件を選択して、予想の種を蒔いてね！\n⚠️ 結果は馬番のみで、馬名は出力されません🙇‍♂️";
+        warningEl.style.borderLeftColor = "var(--theme-color)";
+    } else {
+        // 特定レース選択モード
+        warningEl.style.display = "block";
+        warningEl.innerText = "馬場状態を選択し、予想の種を蒔いてね！\n結果には馬番・馬名・騎手名などが出力されるよ！";
+        warningEl.style.borderLeftColor = "var(--theme-color)";
+    }
+
     if (foundRace) {
         isRace = true;
         currentActiveRace = foundRace;
@@ -460,7 +475,7 @@ function checkRaceMode() {
     } else {
         isRace = false;
         currentActiveRace = null;
-        document.getElementById('mainTitle').innerText = "🏇 レース予想（汎用）";
+        document.getElementById('mainTitle').innerText = "🏇 メインレース以外（汎用モード）";
         resetBtn.style.display = "block";
         resetBtn.innerText = "リセット";
     }
@@ -539,7 +554,7 @@ function generatePrediction() {
         const w2 = document.getElementById('word2').value;
         const w3 = document.getElementById('word3').value;
         if (!w1 && !w2 && !w3) { 
-            showError("エラー：最低1つ、ワードを入力してね！\nそのワードが予想の種になるよ！");
+            showError("エラー：最低1つ、予想の種を蒔いてね！");
         } else {
             showError("エラー：未選択の項目があります。");
         }
@@ -577,12 +592,12 @@ function generatePrediction() {
 
     const marks = [{s: "◎"}, {s: "◯"}, {s: "▲"}, {s: "△"}, {s: "⭐︎"}];
 
-    let html = "<h3>予想結果</h3><div class='prediction-card'>";
+    let html = "<h3>結果</h3><div class='prediction-card'>";
     let copyText = `【${document.getElementById('mainTitle').innerText}】\n`;
     copyText += `${date} ${venue}${raceNum}\n\n`;
 
     let usedWords = [w1, w2, w3].filter(w => w !== "").join("\n");
-    if (usedWords) copyText += `入力ワード：\n${usedWords}\n\n`;
+    if (usedWords) copyText += `蒔いた種：\n${usedWords}\n\n`;
 
     for(let i = 0; i < 5; i++) {
         if (i >= count) break;
@@ -611,7 +626,7 @@ function generatePrediction() {
     }
     
     document.getElementById('result').innerHTML = html + "</div>";
-    currentPredictionText = copyText + "\n#ランダムワードで簡単競馬予想";
+    currentPredictionText = copyText + "\n#予想の種で簡単お馬選び";
     document.getElementById('saveBtn').style.display = "block";
     document.getElementById('xBtn').style.display = "block";
     document.getElementById('copyBtn').style.display = "block";
@@ -635,7 +650,7 @@ async function saveAsImage() {
         const file = new File([blob], `prediction_${new Date().getTime()}.png`, { type: 'image/png' });
 
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: '競馬予想結果', text: currentPredictionText });
+            await navigator.share({ files: [file], title: '予想の種で簡単お馬選び！', text: currentPredictionText });
         } else {
             handleFallbackSave(canvas.toDataURL("image/png"));
         }
@@ -667,7 +682,7 @@ function postToX() {
 
 function copyResult() {
     navigator.clipboard.writeText(currentPredictionText).then(() => {
-        alert("予想結果をコピーしました！SNS等に貼り付けてください。");
+        alert("結果をコピーしました！SNS等に貼り付けてください。");
     }).catch(err => { alert("コピーに失敗しました。"); });
 }
 
