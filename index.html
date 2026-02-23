@@ -15,7 +15,7 @@
     <meta name="twitter:description" content="好きな言葉を種にして、自分だけの簡単競馬予想！">
     <meta name="twitter:image" content="https://true-ocean.github.io/JRA_Prediction_App/image.jpg">
 
-    <title>🐎 ランダムワードで簡単競馬予想</title>
+    <title>🐎 ランダムワードで簡単競馬予想！</title>
     <style>
         :root {
             --theme-color: #27ae60;
@@ -25,39 +25,50 @@
             --copy-color: #34495e;
         }
         /* 基本スタイル */
-        body { font-family: "Helvetica Neue", Arial, sans-serif; background: #eef2f3; color: #333; padding: 10px; margin: 0; transition: 0.3s; }
-        .container { background: white; max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); box-sizing: border-box; }
+        body { font-family: "Helvetica Neue", Arial, sans-serif; background: #eef2f3; color: #333; padding: 0; margin: 0; transition: 0.3s; }
+        
+        /* バナー設定 */
+        .top-banner {
+            background: var(--theme-color);
+            color: white;
+            text-align: center;
+            padding: 15px 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .container { background: white; max-width: 600px; margin: 15px auto; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); box-sizing: border-box; }
         h1 { text-align: center; color: #2c3e50; border-bottom: 2px solid var(--theme-color); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.5em; transition: 0.3s; }
         
         /* フォーム要素 */
         .form-group { margin-bottom: 15px; display: flex; flex-direction: column; align-items: stretch;}
         label { font-weight: bold; margin-bottom: 5px; font-size: 0.85em; color: #555; text-align: left;}
-        select, input { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; background: #fff; width: 100%; box-sizing: border-box; -webkit-appearance: none; appearance: none; text-align: left; text-align-last: left; }
+        select, input { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; background: #fff; width: 100%; box-sizing: border-box; -webkit-appearance: none; appearance: none; text-align: left; }
         
-        /* 無効化されたセレクトボックスや入力欄のスタイル */
+        /* 無効化スタイル */
         select:disabled, input:disabled {
-            background-color: #f0f0f0; /* 少しグレーにする */
-            color: #999;              /* 文字を薄くする */
-            cursor: not-allowed;      /* カーソルを禁止マークにする */
-            border-color: #ddd;       /* 枠線を薄くする */
-            opacity: 1;               /* iOSでの透明度調整を無効化 */
-            -webkit-text-fill-color: #999; /* iOSでの文字色を固定 */
+            background-color: #f0f0f0;
+            color: #999;
+            cursor: not-allowed;
+            border-color: #ddd;
+            opacity: 1;
+            -webkit-text-fill-color: #999;
         }
         
-        /* グリッドレイアウト（スマホ時は1列） */
+        /* グリッドレイアウト（スマホでも2列を維持するクラス） */
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 5px; }
-        @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
 
         .word-inputs { display: flex; flex-direction: column; gap: 8px; width: 100%; }
 
-        /* ボタンデザイン（幅を統一） */
+        /* ボタンデザイン */
         .button-stack { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
         button { width: 100%; padding: 15px; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; box-sizing: border-box; }
         
         .btn-predict { background: var(--theme-color); font-size: 18px; }
         .btn-predict:hover { opacity: 0.9; }
         .btn-reset { background: var(--reset-color); }
-        .btn-copy { background: var(--copy-color); display: none; } /* 結果がある時だけ表示 */
+        .btn-copy { background: var(--copy-color); display: none; }
         button:active { transform: scale(0.98); }
 
         /* 予想結果 */
@@ -68,14 +79,13 @@
             display: flex; 
             align-items: center; 
             justify-content: flex-start; 
-            padding: 10px 12px 10px 12px; 
+            padding: 10px 12px; 
             border-bottom: 1px solid #eee;
-            min-width: 320px; /* ★スマホでも画像化の際に潰れない最低幅を確保 */
+            min-width: 320px;
             box-sizing: border-box;
         }
 
         .prediction-item:last-child { border-bottom: none; }
-        .term { display: none; width: 45px; font-size: 0.75em; color: #7f8c8d; font-weight: bold; flex-shrink: 0; }
         .mark { width: 30px; font-weight: bold; font-size: 1.2em; text-align: center; flex-shrink: 0; }
         .waku-box { width: 30px; height: 30px; border: 2px solid #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em; margin-left: 10px; flex-shrink: 0; }
         .horse-name { font-weight: bold; font-size: 1em; color: #2c3e50; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -86,21 +96,18 @@
             text-align: center;
             white-space: pre-line;
             font-size: 0.9em;
-            
-            /* 初期状態：完全に隠す */
             opacity: 0;
             max-height: 0;
             margin-bottom: 0;
             padding: 0;
-            visibility: hidden; /* これで隙間を消す */
+            visibility: hidden;
             overflow: hidden;
-            transition: all 0.5s ease; /* 0.5秒かけて変化 */
+            transition: all 0.5s ease;
         }
 
-        /* クラスが付いた時だけ表示 */
         #errorMessage.show {
             opacity: 1;
-            max-height: 100px; /* 内容に合わせて適宜調整 */
+            max-height: 100px;
             margin-bottom: 15px;
             padding: 12px;
             visibility: visible;
@@ -117,6 +124,10 @@
 
 <body>
 
+<div class="top-banner" id="topBanner">
+    🏇 ランダムワードで簡単競馬予想！
+</div>
+
 <div class="container">
 
     <h1 id="mainTitle">🏇 レース予想（汎用）</h1>
@@ -130,16 +141,27 @@
         <label>レース選択</label>
         <select id="raceSelector" onchange="applySelectedRace()">
             <option value="-1">汎用モード：自分で条件選択</option>
-            </select>
-    </div>
-
-    <div class="form-group">
-        <label>開催日</label>
-        <input type="date" id="raceDate" onchange="checkRaceMode()">
+        </select>
     </div>
 
     <div class="row">
-        <div class="form-group"><label>競馬場</label>
+        <div class="form-group">
+            <label>開催日</label>
+            <input type="date" id="raceDate" onchange="checkRaceMode()">
+        </div>
+        <div class="form-group"><label>クラス</label>
+            <select id="raceClass" onchange="checkRaceMode(); validateInputs()">
+                <option value="">-- 選択 --</option>
+                <option selected>G1</option><option>G2</option><option>G3</option><option>OP(L)</option>
+                <option>オープン</option><option>3勝クラス</option><option>2勝クラス</option>
+                <option>1勝クラス</option><option>未勝利</option><option>新馬</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group">
+            <label>競馬場</label>
             <select id="venue" onchange="checkRaceMode(); validateInputs()">
                 <option value="">-- 選択 --</option>
                 <option>札幌</option><option>函館</option><option>新潟</option><option>福島</option>
@@ -162,12 +184,10 @@
                 <option>2歳</option><option>3歳</option><option>3歳以上</option><option selected>4歳以上</option>
             </select>
         </div>
-        <div class="form-group"><label>クラス</label>
-            <select id="raceClass" onchange="checkRaceMode(); validateInputs()">
+        <div class="form-group"><label>重量</label>
+            <select id="weightType" onchange="checkRaceMode(); validateInputs()">
                 <option value="">-- 選択 --</option>
-                <option selected>G1</option><option>G2</option><option>G3</option><option>OP(L)</option>
-                <option>オープン</option><option>3勝クラス</option><option>2勝クラス</option>
-                <option>1勝クラス</option><option>未勝利</option><option>新馬</option>
+                <option selected>定量</option><option>別定</option><option>馬齢</option><option>ハンデ</option>
             </select>
         </div>
     </div>
@@ -195,10 +215,16 @@
     </div>
 
     <div class="row">
-        <div class="form-group"><label>重量</label>
-            <select id="weightType" onchange="checkRaceMode(); validateInputs()">
+        <div class="form-group">
+            <label>出走頭数</label>
+            <select id="horseCount" onchange="checkRaceMode(); validateInputs()">
                 <option value="">-- 選択 --</option>
-                <option selected>定量</option><option>別定</option><option>馬齢</option><option>ハンデ</option>
+                <script>
+                    for(let i=5; i<=18; i++) {
+                        const selected = i === 16 ? 'selected' : '';
+                        document.write(`<option value="${i}" ${selected}>${i}頭</option>`);
+                    }
+                </script>
             </select>
         </div>
         <div class="form-group"><label>馬場状態</label>
@@ -207,19 +233,6 @@
                 <option>良</option><option>稍重</option><option>重</option><option>不良</option>
             </select>
         </div>
-    </div>
-
-    <div class="form-group">
-        <label>出走頭数</label>
-        <select id="horseCount" onchange="checkRaceMode(); validateInputs()">
-            <option value="">-- 選択 --</option>
-            <script>
-                for(let i=5; i<=18; i++) {
-                    const selected = i === 16 ? 'selected' : '';
-                    document.write(`<option value="${i}" ${selected}>${i}頭</option>`);
-                }
-            </script>
-        </select>
     </div>
 
     <div class="form-group">
@@ -234,7 +247,7 @@
     <div id="errorMessage"></div>
 
     <div class="button-stack">
-        <button class="btn-predict" onclick="generatePrediction()">予想を算出する</button>
+        <button class="btn-predict" onclick="generatePrediction()">予想結果を出力！</button>
         <button class="btn-reset" id="resetBtn" onclick="resetToDefault()">リセット</button>
     </div>
 
@@ -332,7 +345,7 @@ const RACE_LIST = [
 ];
 
 let isRace = false;
-let currentActiveRace = null; // 現在選択・一致しているレースデータ
+let currentActiveRace = null;
 let currentPredictionText = "";
 
 window.onload = function() {
@@ -347,40 +360,31 @@ window.onload = function() {
         selector.appendChild(opt);
     });
 
-    selector.value = "-1"; // デフォルトは「自分で設定する」
+    selector.value = "-1";
     applySelectedRace("-1");
 };
 
-// 入力項目の有効・無効を切り替える関数
 function toggleInputsDisabled(isDisabled) {
     const targetIds = [
         'raceDate', 'venue', 'raceNum', 'ageLimit', 
         'raceClass', 'track', 'distance', 'weightType', 'horseCount'
     ];
-    
     targetIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.disabled = isDisabled;
     });
 }
 
-// 選択されたレースの情報を入力欄に反映する
 function applySelectedRace(forcedIndex = null) {
     const selector = document.getElementById('raceSelector');
     const index = forcedIndex !== null ? forcedIndex : selector.value;
-    
-    // レースを切り替えたら、以前のエラー表示を消す
     const errorEl = document.getElementById('errorMessage');
-    if (errorEl) {
-        errorEl.classList.remove('show');
-    }
+    if (errorEl) errorEl.classList.remove('show');
 
-    // --- 「自分で設定する」を選んだ場合の処理 ---
     if (index === "-1") {
-        // 入力を有効にして、全ての入力を初期化・クリアする
         toggleInputsDisabled(false);
         const today = new Date().toISOString().split('T')[0];
-        document.getElementById('raceDate').value = today; // 日付は今日にリセット
+        document.getElementById('raceDate').value = today;
         document.getElementById('venue').value = "";
         document.getElementById('raceNum').value = "";
         document.getElementById('ageLimit').value = "";
@@ -390,19 +394,15 @@ function applySelectedRace(forcedIndex = null) {
         document.getElementById('weightType').value = "";
         document.getElementById('condition').value = "";
         document.getElementById('horseCount').value = "";
-        
-        // ワード入力欄も空にする
         document.getElementById('word1').value = "";
         document.getElementById('word2').value = "";
         document.getElementById('word3').value = "";
-
-        updateTheme(); // テーマ色（芝/ダート）を反映
-        checkRaceMode(); // タイトルを「汎用」へ切り替え
+        updateTheme();
+        checkRaceMode();
         return;
     }
     
-    // --- 特定のレースを選んだ場合の処理 ---
-    toggleInputsDisabled(true); // ★入力を無効にする
+    toggleInputsDisabled(true);
     const race = RACE_LIST[index];
     document.getElementById('raceDate').value = race.raceDate;
     document.getElementById('venue').value = race.venue;
@@ -414,11 +414,9 @@ function applySelectedRace(forcedIndex = null) {
     document.getElementById('weightType').value = race.weightType;
     document.getElementById('condition').value = "";
     document.getElementById('horseCount').value = race.horseCount;
-
     document.getElementById('word1').value = "";
     document.getElementById('word2').value = "";
     document.getElementById('word3').value = "";
-    
     updateTheme();
     checkRaceMode();
     document.getElementById('resetBtn').innerText = `リセット（${race.title}）`;
@@ -442,22 +440,20 @@ function checkRaceMode() {
         parseInt(count) === race.horseCount
     );
 
-    const resetBtn = document.getElementById('resetBtn'); // リセットボタンを取得
+    const resetBtn = document.getElementById('resetBtn');
 
     if (foundRace) {
         isRace = true;
         currentActiveRace = foundRace;
         document.getElementById('mainTitle').innerText = `🏆 ${foundRace.title}`;
-        resetBtn.style.display = "none"; // レースモードのときはリセットボタンを非表示
+        resetBtn.style.display = "none";
     } else {
         isRace = false;
         currentActiveRace = null;
         document.getElementById('mainTitle').innerText = "🏇 レース予想（汎用）";
-        // 汎用モードの時だけリセットボタンを表示する
         resetBtn.style.display = "block";
         resetBtn.innerText = "リセット";
     }
-    
     document.getElementById('copyBtn').style.display = "none";
     document.getElementById('xBtn').style.display = "none";
     document.getElementById('saveBtn').style.display = "none"; 
@@ -467,7 +463,6 @@ function checkRaceMode() {
 function resetToDefault() {
     const selector = document.getElementById('raceSelector');
     const index = selector.value;
-    
     if (index !== "-1") {
         applySelectedRace(index);
     } else {
@@ -481,8 +476,8 @@ function resetToDefault() {
 function updateTheme() {
     const track = document.getElementById('track').value;
     const root = document.documentElement;
+    const banner = document.getElementById('topBanner');
     
-    // ダートが選ばれている時だけ茶色、それ以外（芝 or 未選択）は緑
     if (track === "ダート") {
         root.style.setProperty('--theme-color', '#a67c52');
         root.style.setProperty('--theme-hover', '#8c6543');
@@ -490,9 +485,10 @@ function updateTheme() {
         root.style.setProperty('--theme-color', '#27ae60');
         root.style.setProperty('--theme-hover', '#219150');
     }
+    // バナーの色もテーマに合わせる
+    banner.style.backgroundColor = getComputedStyle(root).getPropertyValue('--theme-color');
 }
 
-// 入力チェックを行う関数
 function validateInputs() {
     const venue = document.getElementById('venue').value;
     const raceNum = document.getElementById('raceNum').value;
@@ -506,87 +502,49 @@ function validateInputs() {
     const w1 = document.getElementById('word1').value;
     const w2 = document.getElementById('word2').value;
     const w3 = document.getElementById('word3').value;
-
     const errorEl = document.getElementById('errorMessage');
 
-    // 判定用フラグ
     const isRaceConfigOk = venue && raceNum && ageLimit && raceClass && track && distance && weightType && horseCount && condition;
     const isWordOk = w1 || w2 || w3;
 
     if (isRaceConfigOk && isWordOk) {
-        // 全てOKなら消す
         errorEl.classList.remove('show');
-        setTimeout(() => { if(!errorEl.classList.contains('show')) errorEl.innerText = ""; }, 500);
         return true;
-    } else if (isRaceConfigOk && !isWordOk) {
-        // レース条件は揃ったが、ワードがまだの場合
-        // すでにエラーが出ている状態なら、メッセージだけ「ワード入力」に切り替える
-        if (errorEl.classList.contains('show')) {
-            errorEl.innerText = "エラー：最低1つ、ワードを入力してね！\nそのワードが予想の種になるよ！";
-        }
-    } else if (!isRaceConfigOk) {
-        // まだレース条件が揃っていない場合
-        // （ここは現状維持。もしエラー表示中なら「未選択項目あり」のままにする）
-        if (errorEl.classList.contains('show')) {
-            errorEl.innerText = "エラー：未選択の項目があります。";
-        }
     }
-    
     return false;
 }
 
 function generatePrediction() {
-    // エラーメッセージ用要素を取得
     const errorEl = document.getElementById('errorMessage');
-
-    // 内部用のエラー表示関数（定義を先頭に持ってくる）
     const showError = (message) => {
         errorEl.innerText = message;
         errorEl.classList.add('show');
         errorEl.scrollIntoView({behavior: 'smooth', block: 'center'});
     };
 
-    // 1. 作成済みの validateInputs を呼び出す
     const isValid = validateInputs();
 
-    // 2. 入力不足がある場合は、具体的なエラーを表示して終了
     if (!isValid) {
-        const venue = document.getElementById('venue').value;
-        const raceNum = document.getElementById('raceNum').value;
-        const ageLimit = document.getElementById('ageLimit').value;
-        const raceClass = document.getElementById('raceClass').value;
-        const track = document.getElementById('track').value;
-        const distance = document.getElementById('distance').value;
-        const weightType = document.getElementById('weightType').value;
-        const horseCount = document.getElementById('horseCount').value;
-        const condition = document.getElementById('condition').value;
         const w1 = document.getElementById('word1').value;
         const w2 = document.getElementById('word2').value;
         const w3 = document.getElementById('word3').value;
-
-        if (!venue || !raceNum || !ageLimit || !raceClass || !track || !distance || !weightType || !horseCount || !condition) {
+        if (!w1 && !w2 && !w3) { 
+            showError("エラー：最低1つ、ワードを入力してね！\nそのワードが予想の種になるよ！");
+        } else {
             showError("エラー：未選択の項目があります。");
         }
-        else if (!w1 && !w2 && !w3) { 
-            showError("エラー：最低1つ、ワードを入力してね！\nそのワードが予想の種になるよ！");
-        }
-        return; // 計算を中止
+        return;
     }
 
-    // --- 3. ここからは「入力が完璧な場合」の処理 ---
-
-    // 入力値の再取得（計算用）
     const date = document.getElementById('raceDate').value;
     const venue = document.getElementById('venue').value;
     const raceNum = document.getElementById('raceNum').value;
-    const track = document.getElementById('track').value;
     const w1 = document.getElementById('word1').value;
     const w2 = document.getElementById('word2').value;
     const w3 = document.getElementById('word3').value;
     const horseCount = document.getElementById('horseCount').value;
     const count = parseInt(horseCount);
 
-    // シード値の計算
     let seed = 0;
     const combined = date + venue + raceNum + 
                      document.getElementById('ageLimit').value + 
@@ -600,7 +558,6 @@ function generatePrediction() {
         seed = (seed + combined.charCodeAt(i) * (i + 1)) % 1000000;
     }
 
-    // シャッフルロジック
     let horses = Array.from({length: count}, (_, i) => i + 1);
     for (let i = horses.length - 1; i > 0; i--) {
         seed = (seed * 9301 + 49297) % 233280;
@@ -608,21 +565,14 @@ function generatePrediction() {
         [horses[i], horses[j]] = [horses[j], horses[i]];
     }
 
-    // 結果表示の構築
-    const marks = [
-        {t: "本命", s: "◎"}, {t: "対抗", s: "◯"},
-        {t: "単穴", s: "▲"}, {t: "連下", s: "△"}, {t: "星", s: "⭐︎"}
-    ];
+    const marks = [{s: "◎"}, {s: "◯"}, {s: "▲"}, {s: "△"}, {s: "⭐︎"}];
 
     let html = "<h3>予想結果</h3><div class='prediction-card'>";
     let copyText = `【${document.getElementById('mainTitle').innerText}】\n`;
     copyText += `${date} ${venue}${raceNum}\n\n`;
 
     let usedWords = [w1, w2, w3].filter(w => w !== "").join("\n");
-    if (usedWords) {
-        copyText += `入力ワード：\n${usedWords}\n`;
-    }
-    copyText += `\n`;
+    if (usedWords) copyText += `入力ワード：\n${usedWords}\n\n`;
 
     for(let i = 0; i < 5; i++) {
         if (i >= count) break;
@@ -658,44 +608,30 @@ function generatePrediction() {
 }
 
 async function saveAsImage() {
-    // 予想結果のカード部分（白いボックス）だけをターゲットにする
     const target = document.querySelector("#result .prediction-card");
     if (!target) return;
-
     try {
-        // html2canvasがターゲット（カード部分）のサイズを自動認識して切り抜きます
         const canvas = await html2canvas(target, {
-            scale: 2, // 鮮明に保存するための倍率
-            backgroundColor: "#ffffff", // 背景を白で固定
+            scale: 2,
+            backgroundColor: "#ffffff",
             logging: false,
-            // 画面上の見た目（幅）をそのまま維持する設定
             width: target.offsetWidth,
             height: target.offsetHeight,
             scrollX: 0,
-            scrollY: -window.scrollY, // スクロール位置によるズレを防止
+            scrollY: -window.scrollY,
             useCORS: true
         });
-
-        // Canvasをファイル化
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         const file = new File([blob], `prediction_${new Date().getTime()}.png`, { type: 'image/png' });
 
-        // 共有・保存処理
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({
-                files: [file],
-                title: '競馬予想結果',
-                text: currentPredictionText
-            });
+            await navigator.share({ files: [file], title: '競馬予想結果', text: currentPredictionText });
         } else {
             handleFallbackSave(canvas.toDataURL("image/png"));
         }
-    } catch (error) {
-        console.error("Error sharing:", error);
-    }
+    } catch (error) { console.error("Error sharing:", error); }
 }
 
-// フォールバック（共有機能がないブラウザ用）
 function handleFallbackSave(imageData) {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (isMobile) {
@@ -722,9 +658,7 @@ function postToX() {
 function copyResult() {
     navigator.clipboard.writeText(currentPredictionText).then(() => {
         alert("予想結果をコピーしました！SNS等に貼り付けてください。");
-    }).catch(err => {
-        alert("コピーに失敗しました。");
-    });
+    }).catch(err => { alert("コピーに失敗しました。"); });
 }
 
 function getWakuInfo(num, total) {
