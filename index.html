@@ -44,8 +44,18 @@
         /* フォーム要素 */
         .form-group { margin-bottom: 15px; display: flex; flex-direction: column; align-items: stretch;}
         label { font-weight: bold; margin-bottom: 5px; font-size: 0.85em; color: #555; text-align: left;}
-        select, input { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; background: #fff; width: 100%; box-sizing: border-box; -webkit-appearance: none; appearance: none; text-align: left; }
+        select, input { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; background: #fff; width: 100%; 
+            box-sizing: border-box; -webkit-appearance: none; appearance: none; display: block; text-align: left; text-align-last: left; }
         
+        /* iOSの日付入力欄のプレースホルダや中身を左寄せにするための呪文 */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            position: absolute;
+            right: 10px;
+        }
+        input[type="date"] {
+            position: relative;
+        }
+
         /* 無効化スタイル */
         select:disabled, input:disabled {
             background-color: #f0f0f0;
