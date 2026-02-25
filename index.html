@@ -171,9 +171,11 @@
         .prediction-item:last-child { border-bottom: none; }
         .mark { width: 30px; font-weight: bold; font-size: 1.2em; text-align: center; flex-shrink: 0; }
         .waku-box { width: 30px; height: 30px; border: 2px solid #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em; margin-left: 10px; flex-shrink: 0; }
-        .horse-name { font-weight: bold; font-size: 1em; color: #2c3e50; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .horse-info { margin-left: 10px; display: flex; flex-direction: column; min-width: 0; flex: 1;}
-        .jockey-name { font-size: 0.8em; color: #666; margin-top: 2px; }
+        .horse-info { margin-left: 12px; display: flex; flex-direction: column; min-width: 0; flex: 1;}
+        .horse-name-row { display: flex; align-items: baseline; gap: 8px; }
+        .horse-name { font-weight: bold; font-size: 1.05em; color: #2c3e50; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .horse-info-meta { font-size: 0.8em; color: #888; font-weight: normal; } /* 性齢の色を薄く設定 */
+        .jockey-name { font-size: 0.85em; color: #666; margin-top: 1px; }
                 
         #errorMessage {
             text-align: center;
@@ -714,7 +716,10 @@ function generatePrediction() {
             const horse = currentActiveRace.horses[horseNum - 1] || { name: horseNum + "番", info: "", jockey: "" };
             infoHtml = `
                 <div class="horse-info">
-                    <div class="horse-name">${horse.name}（${horse.info}）</div>
+                    <div class="horse-name-row">
+                        <span class="horse-name">${horse.name}</span>
+                        <span class="horse-info-meta">${horse.info}</span>
+                    </div>
                     <div class="jockey-name">${horse.jockey}</div>
                 </div>`;
             lineText += ` ${horse.name}`;
