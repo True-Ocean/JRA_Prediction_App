@@ -50,14 +50,33 @@
             font-family: "Helvetica Neue", Arial, sans-serif;
             background-image: url('app_image.png');
             background-size: cover;
-            background-attachment: fixed;
+            /* fixedではなく、スクロールしても動かないように擬似的に固定 */
             background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             color: #333;
             padding: 0;
             margin: 0;
             transition: 0.3s;
-            background-repeat: no-repeat;
             min-height: 100vh;
+        }
+
+        /* iOSなどでbackground-attachment: fixedが不安定な場合の補強策 */
+        @media screen and (max-width: 768px) {
+            body::before {
+                content: "";
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: -1;
+                width: 100%;
+                height: 100vh;
+                background: url('app_image.png') center center / cover no-repeat;
+            }
+            body {
+                background-image: none; /* 本体側の背景を消して擬似要素に任せる */
+            }
         }
 
         /* 中央の白いパネルを半透明にする */
@@ -130,7 +149,14 @@
 
         /* 結果表示 */
         #result { margin-top: 25px; }
-        .prediction-card { border: 1px solid #ddd; border-radius: 8px; background: #fff; overflow: hidden; }
+        .prediction-card {
+            border: 1px solid rgba(0, 0, 0, 0.1); 
+            border-radius: 8px; 
+            background: rgba(255, 255, 255, 0.5); /* 白背景を透過 */
+            backdrop-filter: blur(4px); /* 結果部分もうっすらぼかす */
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
 
         .prediction-item { 
             display: flex; 
