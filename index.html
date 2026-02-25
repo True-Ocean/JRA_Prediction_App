@@ -588,6 +588,7 @@ function updateTheme() {
 }
 
 function validateInputs() {
+    // 1. 各項目の値を取得
     const venue = document.getElementById('venue').value;
     const raceNum = document.getElementById('raceNum').value;
     const ageLimit = document.getElementById('ageLimit').value;
@@ -597,19 +598,34 @@ function validateInputs() {
     const weightType = document.getElementById('weightType').value;
     const horseCount = document.getElementById('horseCount').value;
     const condition = document.getElementById('condition').value;
-    const w1 = document.getElementById('word1').value;
-    const w2 = document.getElementById('word2').value;
-    const w3 = document.getElementById('word3').value;
+    
+    // trim()を入れて空白のみの入力を防ぐ
+    const w1 = document.getElementById('word1').value.trim();
+    const w2 = document.getElementById('word2').value.trim();
+    const w3 = document.getElementById('word3').value.trim();
+    
     const errorEl = document.getElementById('errorMessage');
 
+    // 2. 状態の判定
     const isRaceConfigOk = venue && raceNum && ageLimit && raceClass && track && distance && weightType && horseCount && condition;
     const isWordOk = w1 || w2 || w3;
 
-    if (isRaceConfigOk && isWordOk) {
+    // 3. リアルタイムでのエラー消去ロジック
+    // 「未選択エラー」が表示されている時に、全項目が埋まったら消す
+    if (isRaceConfigOk && errorEl.innerText === "エラー：未選択の項目があるよ！") {
         errorEl.classList.remove('show');
-        return true;
     }
-    return false;
+    // 「種の欠如エラー」が表示されている時に、種が入力されたら消す
+    if (isWordOk && errorEl.innerText === "エラー：最低1つ、予想の種を蒔いてね！") {
+        errorEl.classList.remove('show');
+    }
+
+    // 4. 最終的な有効性を返す（両方OKならtrue）
+    return {
+        allOk: isRaceConfigOk && isWordOk,
+        raceOk: isRaceConfigOk,
+        wordOk: isWordOk
+    };
 }
 
 function generatePrediction() {
@@ -620,19 +636,25 @@ function generatePrediction() {
         errorEl.scrollIntoView({behavior: 'smooth', block: 'center'});
     };
 
-    const isValid = validateInputs();
+    // validateInputs を呼び出し、詳細な判定結果を受け取る
+    const status = validateInputs();
 
-    if (!isValid) {
-        const w1 = document.getElementById('word1').value;
-        const w2 = document.getElementById('word2').value;
-        const w3 = document.getElementById('word3').value;
-        if (!w1 && !w2 && !w3) { 
-            showError("エラー：最低1つ、予想の種を蒔いてね！");
-        } else {
-            showError("エラー：未選択の項目があります。");
-        }
+    // --- 優先順位に基づいたエラー判定 ---
+
+    // 【最優先】レース条件に未選択がある場合
+    if (!status.raceOk) {
+        showError("エラー：未選択の項目があるよ！");
         return;
     }
+
+    // 【次に優先】レース条件はOKだが、種が1つもない場合
+    if (!status.wordOk) {
+        showError("エラー：最低1つ、予想の種を蒔いてね！");
+        return;
+    }
+
+    // 両方OKならエラーを消して予測ロジックへ
+    errorEl.classList.remove('show');
 
     // Googleアナリティクスに「予想実行」という記録を送る
     gtag('event', 'prediction_executed', {
