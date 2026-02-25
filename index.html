@@ -143,7 +143,7 @@
         
         .btn-predict { background: var(--theme-color); font-size: 18px; }
         .btn-predict:hover { opacity: 0.9; }
-        .btn-reset { background: var(--reset-color); }
+        .btn-reset { background: var(--reset-color); display: none; } /* display: none を追加 */
         .btn-copy { background: var(--copy-color); display: none; }
         button:active { transform: scale(0.98); }
 
@@ -321,9 +321,9 @@
     <div class="form-group">
         <label>予想の種（好きな言葉などを3つまで）</label>
         <div class="word-inputs">
-            <input type="text" id="word1" placeholder="種1" oninput="validateInputs()">
-            <input type="text" id="word2" placeholder="種2" oninput="validateInputs()">
-            <input type="text" id="word3" placeholder="種3" oninput="validateInputs()">
+            <input type="text" id="word1" placeholder="種1" oninput="validateInputs(); checkRaceMode()">
+            <input type="text" id="word2" placeholder="種2" oninput="validateInputs(); checkRaceMode()">
+            <input type="text" id="word3" placeholder="種3" oninput="validateInputs(); checkRaceMode()">
         </div>
     </div>
 
@@ -331,7 +331,7 @@
 
     <div class="button-stack">
         <button class="btn-predict" onclick="generatePrediction()">予想の種を蒔く！</button>
-        <button class="btn-reset" id="resetBtn" onclick="resetToDefault()">リセット</button>
+        <button class="btn-reset" id="resetBtn" onclick="resetToDefault()">種をリセット</button>
     </div>
 
     <div id="result"></div>
@@ -502,7 +502,6 @@ function applySelectedRace(forcedIndex = null) {
     document.getElementById('word3').value = "";
     updateTheme();
     checkRaceMode();
-    document.getElementById('resetBtn').innerText = `リセット（${race.title}）`;
 }
 
 function checkRaceMode() {
@@ -527,15 +526,25 @@ function checkRaceMode() {
 
     const resetBtn = document.getElementById('resetBtn');
 
+    // 入力状況を取得（validateInputsの結果を利用）
+    const status = validateInputs();
+    
+    // モード(isRace)に関係なく、種が1つでも入力されていれば表示
+    if (status.wordOk) {
+        resetBtn.style.display = "block";
+    } else {
+        resetBtn.style.display = "none";
+    }
+
     // --- テキスト出し分けロジック ---
-if (foundRace) {
+    if (foundRace) {
         isRace = true;
         currentActiveRace = foundRace;
         document.getElementById('mainTitle').innerText = `🏆 ${foundRace.title} 🏆`;
         
         // 特定レース選択時のメッセージ
         warningEl.innerText = "馬場状態を選択して、予想の種を蒔いてね！\n結果には馬番・馬名・騎手名などが出力されるよ！";
-        resetBtn.style.display = "none";
+
     } else {
         isRace = false;
         currentActiveRace = null;
@@ -543,8 +552,7 @@ if (foundRace) {
         
         // 汎用モード時のメッセージ
         warningEl.innerText = "レース条件を選択して、予想の種を蒔いてね！\n⚠️ 結果は馬番のみで、馬名は出力されません🙇‍♂️";
-        resetBtn.style.display = "block";
-        resetBtn.innerText = "リセット";
+
     }
 
     // 注意書きの表示自体は常に block（表示）でOK
@@ -559,16 +567,10 @@ if (foundRace) {
 }
 
 function resetToDefault() {
-    const selector = document.getElementById('raceSelector');
-    const index = selector.value;
-    if (index !== "-1") {
-        applySelectedRace(index);
-    } else {
-        document.getElementById('word1').value = "";
-        document.getElementById('word2').value = "";
-        document.getElementById('word3').value = "";
-        checkRaceMode();
-    }
+    document.getElementById('word1').value = "";
+    document.getElementById('word2').value = "";
+    document.getElementById('word3').value = "";
+    checkRaceMode();
 }
 
 function updateTheme() {
@@ -729,6 +731,8 @@ function generatePrediction() {
     
     document.getElementById('result').innerHTML = html + "</div>";
     currentPredictionText = copyText + "\n#予想の種で簡単お馬選び";
+
+    document.getElementById('resetBtn').style.display = "block";
     document.getElementById('saveBtn').style.display = "block";
     document.getElementById('xBtn').style.display = "block";
     document.getElementById('copyBtn').style.display = "block";
