@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TEDXL8L716"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-TEDXL8L716');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -24,8 +33,6 @@
             --reset-color: #95a5a6;
             --copy-color: #34495e;
         }
-        /* 基本スタイル */
-        body { font-family: "Helvetica Neue", Arial, sans-serif; background: #eef2f3; color: #333; padding: 0; margin: 0; transition: 0.3s; }
         
         /* バナー設定 */
         .top-banner {
@@ -38,9 +45,49 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .container { background: white; max-width: 600px; margin: 15px auto; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); box-sizing: border-box; }
-        h1 { text-align: center; color: #2c3e50; border-bottom: 2px solid var(--theme-color); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.5em; transition: 0.3s; }
+        /* bodyの背景を画像に変更 */
+        body {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            background-image: url('app_image.png');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: #333;
+            padding: 0;
+            margin: 0;
+            transition: 0.3s;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+
+        /* 中央の白いパネルを半透明にする */
+        .container {
+            background: rgba(255, 255, 255, 0.5); /* 最後が透明度。後ろを透かします */
+            backdrop-filter: blur(8px); /* 背後をぼかすエフェクト（iOSなどで綺麗に見えます） */
+            -webkit-backdrop-filter: blur(8px);
+            max-width: 600px;
+            margin: 15px auto;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* バナーも少し透過させる */
+        .top-banner {
+            background: var(--theme-color);
+            opacity: 0.95;
+            color: white;
+            text-align: center;
+            padding: 15px 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
         
+        h1 { text-align: center; color: #2c3e50; border-bottom: 2px solid var(--theme-color); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.5em; transition: 0.3s; }
+
         /* フォーム要素 */
         .form-group { margin-bottom: 15px; display: flex; flex-direction: column; align-items: stretch;}
         label { font-weight: bold; margin-bottom: 5px; font-size: 0.85em; color: #555; text-align: left;}
@@ -272,7 +319,7 @@
     <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; color: #888; font-size: 0.7em; line-height: 1.5;">
         <p style="margin-bottom: 10px;">
             Disclaimer: This application is for entertainment purposes only. It does not provide financial or betting advice. Users are responsible for their own decisions.<br>
-            免責事項：本プラットフォームは娯楽提供を目的としたものであり、金融または勝馬投票（賭博）に関する助言を提供するものではありません。利用者は自己の責任において本アプリを使用するものとします。
+            免責事項：本アプリはエンターテインメントを目的としており、金融または勝馬投票（賭博）に関する助言を提供するものではありません。利用者は自己の責任において本アプリを使用するものとします。
         </p>
         <p style="text-align: center; font-weight: bold;">
             Created by <a href="#" style="color: #666; text-decoration: none;">シャノワール</a>. All rights reserved.
@@ -455,30 +502,30 @@ function checkRaceMode() {
     const resetBtn = document.getElementById('resetBtn');
 
     // --- テキスト出し分けロジック ---
-    if (raceSelector.value === "-1") {
-        // 汎用モード
-        warningEl.style.display = "block";
-        warningEl.innerText = "レース条件を選択して、予想の種を蒔いてね！\n⚠️ 結果は馬番のみで、馬名は出力されません🙇‍♂️";
-        warningEl.style.borderLeftColor = "var(--theme-color)";
-    } else {
-        // 特定レース選択モード
-        warningEl.style.display = "block";
-        warningEl.innerText = "馬場状態を選択し、予想の種を蒔いてね！\n結果には馬番・馬名・騎手名などが出力されるよ！";
-        warningEl.style.borderLeftColor = "var(--theme-color)";
-    }
-
-    if (foundRace) {
+if (foundRace) {
         isRace = true;
         currentActiveRace = foundRace;
         document.getElementById('mainTitle').innerText = `🏆 ${foundRace.title} 🏆`;
+        
+        // 特定レース選択時のメッセージ
+        warningEl.innerText = "馬場状態を選択して、予想の種を蒔いてね！\n結果には馬番・馬名・騎手名などが出力されるよ！";
         resetBtn.style.display = "none";
     } else {
         isRace = false;
         currentActiveRace = null;
         document.getElementById('mainTitle').innerText = "🏇 汎用モード 🏇";
+        
+        // 汎用モード時のメッセージ
+        warningEl.innerText = "レース条件を選択して、予想の種を蒔いてね！\n⚠️ 結果は馬番のみで、馬名は出力されません🙇‍♂️";
         resetBtn.style.display = "block";
         resetBtn.innerText = "リセット";
     }
+
+    // 注意書きの表示自体は常に block（表示）でOK
+    warningEl.style.display = "block";
+    warningEl.style.borderLeftColor = "var(--theme-color)";
+
+    // 結果表示エリアのリセット
     document.getElementById('copyBtn').style.display = "none";
     document.getElementById('xBtn').style.display = "none";
     document.getElementById('saveBtn').style.display = "none"; 
@@ -560,6 +607,13 @@ function generatePrediction() {
         }
         return;
     }
+
+    // Googleアナリティクスに「予想実行」という記録を送る
+    gtag('event', 'prediction_executed', {
+        'event_category': 'engagement',
+        'event_label': 'Generate Button'
+    });
+
 
     const date = document.getElementById('raceDate').value;
     const venue = document.getElementById('venue').value;
