@@ -465,7 +465,7 @@ window.onload = function() {
     RACE_LIST.forEach((race, index) => {
         const opt = document.createElement('option');
         opt.value = index;
-        opt.innerText = race.raceDate + "　　" + race.venue + "　" + race.raceNum + "　　" + race.raceClass + "　　" + race.title;
+        opt.innerText = race.raceDate + " " + race.venue + race.raceNum + " " + race.raceClass + " " + race.title;
         selector.appendChild(opt);
     });
 
