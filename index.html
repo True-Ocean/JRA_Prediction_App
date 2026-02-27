@@ -283,7 +283,8 @@
         <div class="form-group"><label>年齢限定</label>
             <select id="ageLimit" onchange="checkRaceMode(); validateInputs()">
                 <option value="">-- 選択 --</option>
-                <option>2歳</option><option>3歳</option><option>3歳以上</option><option selected>4歳以上</option>
+                <option>2歳</option><option>2歳 牝馬</option><option>3歳</option><option>3歳 牝馬</option>
+                <option>3歳以上</option><option>3歳以上 牝馬</option><option selected>4歳以上</option><option selected>4歳以上 牝馬</option>
             </select>
         </div>
         <div class="form-group"><label>重量</label>
@@ -386,73 +387,8 @@
 </div>
 
 <script>
-// ==========================================
-// 【レース設定リスト】
-// ==========================================
-const RACE_LIST = [
-    {
-        raceDate: "2026-02-22",
-        title: "フェブラリーS（終了）",
-        venue: "東京",
-        raceNum: "11R",
-        track: "ダート",
-        distance: "1600",
-        ageLimit: "4歳以上",
-        raceClass: "G1",
-        weightType: "定量",
-        horseCount: 16,
-        horses: [
-            { name: "オメガギネス", info: "牡6", jockey: "岩田康誠" },
-            { name: "ハッピーマン", info: "牡4", jockey: "高杉吏麒" },
-            { name: "ブライアンセンス", info: "牡6", jockey: "岩田望来" },
-            { name: "ペリエール", info: "牡6", jockey: "佐々木大" },
-            { name: "シックスペンス", info: "牡5", jockey: "戸崎圭太" },
-            { name: "ラムジェット", info: "牡5", jockey: "三浦皇成" },
-            { name: "ロングラン", info: "セ8", jockey: "荻野極" },
-            { name: "サクラトゥジュール", info: "セ9", jockey: "キング" },
-            { name: "ダブルハートボンド", info: "牝5", jockey: "坂井瑠星" },
-            { name: "ロードクロンヌ", info: "牡5", jockey: "橫山和生" },
-            { name: "サンライズホーク", info: "セ7", jockey: "松岡正海" },
-            { name: "コスタノヴァ", info: "牡6", jockey: "ルメール" },
-            { name: "ナチュラルライズ", info: "牡4", jockey: "橫山武史" },
-            { name: "ウィルソンテソーロ", info: "牡7", jockey: "川田将雅" },
-            { name: "ペプチドナイル", info: "牡8", jockey: "富田暁" },
-            { name: "サイモンザナドゥ", info: "牡6", jockey: "池添謙一" }
-        ]
-    },
 
-    {
-        raceDate: "2026-02-22",
-        title: "小倉大賞典（終了）",
-        venue: "小倉",
-        raceNum: "11R",
-        track: "芝",
-        distance: "1800",
-        ageLimit: "4歳以上",
-        raceClass: "G3",
-        weightType: "ハンデ",
-        horseCount: 16,
-        horses: [
-            { name: "マテンロウオリオン", info: "牡7", jockey: "橫山典弘" },
-            { name: "ビーアストニッシド", info: "牡7", jockey: "西村太一" },
-            { name: "エアファンディタ", info: "セ9", jockey: "亀田温心" },
-            { name: "ショウナンアデイブ", info: "牡7", jockey: "丸山元気" },
-            { name: "ヘリオス", info: "セ10", jockey: "菊沢一樹" },
-            { name: "バレハ", info: "牝5", jockey: "鮫島克駿" },
-            { name: "シルトホルン", info: "牡6", jockey: "石田拓郎" },
-            { name: "ラケーマダ", info: "牡6", jockey: "丹内祐次" },
-            { name: "ナムラエイハブ", info: "牡5", jockey: "吉田隼人" },
-            { name: "ケイアイセナ", info: "牡7", jockey: "藤岡佑介" },
-            { name: "エピファニー", info: "牡7", jockey: "杉原誠人" },
-            { name: "センツブライト", info: "牡4", jockey: "団野大成" },
-            { name: "ガイアメンテ", info: "牡5", jockey: "北村友一" },
-            { name: "エラトー", info: "牝5", jockey: "斎藤新" },
-            { name: "リカンカブール", info: "セ7", jockey: "浜中俊" },
-            { name: "タガノデュード", info: "牡5", jockey: "古川吉洋" }
-        ]
-    }
-];
-
+let RACE_LIST = [];
 let isRace = false;
 let currentActiveRace = null;
 let currentPredictionText = "";
@@ -461,17 +397,36 @@ window.onload = function() {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('raceDate').value = today;
 
-    const selector = document.getElementById('raceSelector');
-    RACE_LIST.forEach((race, index) => {
-        const opt = document.createElement('option');
-        opt.value = index;
-        opt.innerText = race.raceDate + " " + race.venue + race.raceNum + " " + race.raceClass + " " + race.title;
-        selector.appendChild(opt);
-    });
-
-    selector.value = "-1";
-    applySelectedRace("-1");
+    // 外部JSONファイルを読み込む
+    loadRaceData();
 };
+
+async function loadRaceData() {
+    try {
+        // race_list.json を読み込み
+        const response = await fetch('race_list.json');
+        if (!response.ok) throw new Error('データの読み込みに失敗しました');
+        
+        RACE_LIST = await response.json();
+
+        // 読み込み終わった後にセレクトボックスを構築
+        const selector = document.getElementById('raceSelector');
+        selector.innerHTML = '<option value="-1">自分でレース条件選択</option>'; // 初期化
+        
+        RACE_LIST.forEach((race, index) => {
+            const opt = document.createElement('option');
+            opt.value = index;
+            opt.innerText = race.raceClass + " " + race.title;
+            selector.appendChild(opt);
+        });
+
+        selector.value = "-1";
+        applySelectedRace("-1");
+        
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
 
 function toggleInputsDisabled(isDisabled) {
     const targetIds = [
@@ -783,7 +738,7 @@ function generatePrediction() {
     for(let i = 0; i < 5; i++) {
         if (i >= count) break;
         const horseNum = horses[i];
-        const waku = getWakuInfo(horseNum, count);
+        const waku = getWakuInfo(horseNum, count); // 修正した新ロジックを使用
         let infoHtml = "";
         let lineText = `${marks[i].s} ${horseNum}`;
 
@@ -800,10 +755,13 @@ function generatePrediction() {
             lineText += ` ${horse.name}`;
         }
 
+        // 枠線の色（waku.border）も反映させるよう修正
         html += `
             <div class="prediction-item">
                 <div class="mark">${marks[i].s}</div>
-                <div class="waku-box" style="background:${waku.bg}; color:${waku.txt}">${horseNum}</div>
+                <div class="waku-box" style="background-color:${waku.bg}; color:${waku.txt}; border-color:${waku.border};">
+                    ${horseNum}
+                </div>
                 ${infoHtml}
             </div>`;
         copyText += lineText + "\n";
@@ -873,18 +831,35 @@ function copyResult() {
 }
 
 function getWakuInfo(num, total) {
-    const colors = [{bg:"#fff",txt:"#333"},{bg:"#333",txt:"#fff"},{bg:"#e74c3c",txt:"#fff"},{bg:"#3498db",txt:"#fff"},{bg:"#f1c40f",txt:"#333"},{bg:"#27ae60",txt:"#fff"},{bg:"#e67e22",txt:"#fff"},{bg:"#ff9ff3",txt:"#333"}];
+    // JRA公式カラーに準拠した設定
+const wakuStyles = [
+        { bg: "#ffffff", txt: "#333", border: "#333" },    // 1枠:白 (境界線はハッキリ)
+        { bg: "#000000", txt: "#fff", border: "#000" },    // 2枠:黒
+        { bg: "#e60012", txt: "#fff", border: "#e60012" }, // 3枠:赤 (鮮やかな赤)
+        { bg: "#0000ff", txt: "#fff", border: "#0000ff" }, // 4枠:青 (純粋な青)
+        { bg: "#fff100", txt: "#333", border: "#fff100" }, // 5枠:黄 (明るい黄色)
+        { bg: "#007d7a", txt: "#fff", border: "#007d7a" }, // 6枠:緑 (画像特有の深緑)
+        { bg: "#ff6600", txt: "#fff", border: "#ff6600" }, // 7枠:橙 (ビビットなオレンジ)
+        { bg: "#ff00ff", txt: "#fff", border: "#ff00ff" }  // 8枠:桃 (鮮やかなピンク)
+    ];
+
     let w = 1;
-    if (total <= 8) w = num;
-    else {
+    if (total <= 8) {
+        w = num;
+    } else {
         const b = Math.floor(total / 8), r = total % 8;
         let cur = 0;
-        for(let i=1; i<=8; i++) {
+        for (let i = 1; i <= 8; i++) {
             cur += (b + (i > (8 - r) ? 1 : 0));
-            if(num <= cur) { w = i; break; }
+            if (num <= cur) {
+                w = i;
+                break;
+            }
         }
     }
-    return colors[w-1];
+    
+    // 計算された枠番(w)に対応するスタイルを返す
+    return wakuStyles[w - 1];
 }
 </script>
 </body>
