@@ -283,8 +283,8 @@
         <div class="form-group"><label>年齢限定</label>
             <select id="ageLimit" onchange="checkRaceMode(); validateInputs()">
                 <option value="">-- 選択 --</option>
-                <option>2歳</option><option>2歳 牝馬</option><option>3歳</option><option>3歳 牝馬</option>
-                <option>3歳以上</option><option>3歳以上 牝馬</option><option selected>4歳以上</option><option selected>4歳以上 牝馬</option>
+                <option>2歳</option><option>2歳 牝</option><option>3歳</option><option>3歳 牝</option>
+                <option>3歳以上</option><option>3歳以上 牝</option><option selected>4歳以上</option><option selected>4歳以上 牝</option>
             </select>
         </div>
         <div class="form-group"><label>重量</label>
@@ -529,9 +529,18 @@ function checkRaceMode() {
     } else {
         isRace = false;
         currentActiveRace = null;
-        document.getElementById('mainTitle').innerText = "🏇 汎用モード 🏇";
         
-        // 汎用モード時のメッセージ
+        const vVal = document.getElementById('venue').value;
+        const nVal = document.getElementById('raceNum').value;
+        const aVal = document.getElementById('ageLimit').value;
+        const cVal = document.getElementById('raceClass').value;
+
+        // 項目が未選択の場合は「汎用モード」とし、揃っていたら「競馬場・R・条件」を表示
+        if (vVal && nVal && aVal && cVal) {
+            document.getElementById('mainTitle').innerText = `🏇 ${vVal} ${nVal} ${aVal} ${cVal} 🏇`;
+        } else {
+            document.getElementById('mainTitle').innerText = "🏇 汎用モード 🏇";
+        }
         warningEl.innerText = "レース条件を選択して、予想の種を蒔いてね！\n⚠️ 結果は馬番のみで、馬名は出力されません🙇‍♂️";
 
     }
@@ -707,7 +716,9 @@ function generatePrediction() {
     const count = parseInt(horseCount);
 
     let seed = 0;
-    const combined = date + venue + raceNum + 
+
+    const titleText = document.getElementById('mainTitle').innerText;
+    const combined = titleText + date + venue + raceNum + 
                      document.getElementById('ageLimit').value + 
                      document.getElementById('raceClass').value + 
                      document.getElementById('track').value + 
