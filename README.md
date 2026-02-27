@@ -54,5 +54,3 @@ This application is for **entertainment purposes only**. It is not a financial o
 ---
 
 **Developed by:** シャノワール (Chat Noir)
-
-他に追加したい機能や、修正したい文言などはありますか？
