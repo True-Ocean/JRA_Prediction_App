@@ -340,16 +340,16 @@
 
     <div class="form-group">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-            <label style="margin-bottom: 0;">予想の種（3つまで）</label>
+            <label style="margin-bottom: 0;">予想の種</label>
             <div style="display: flex; gap: 5px; margin-right: 10px;">
-                <button type="button" onclick="showHints()" style="width: 85px; padding: 4px 10px; font-size: 0.7em; background: #f39c12; margin: 0; line-height: 1; border-radius: 4px;">ヒントを表示</button>
-                <button type="button" onclick="resetHints()" style="width: 85px; padding: 4px 10px; font-size: 0.7em; background: #95a5a6; margin: 0; line-height: 1; border-radius: 4px;">リセット</button>
+                <button type="button" onclick="showHints()" style="width: 120px; padding: 4px 10px; font-size: 0.7em; background: #f39c12; margin: 0; line-height: 1; border-radius: 4px;">ヒントを表示</button>
+                <button type="button" onclick="resetHints()" style="width: 120px; padding: 4px 10px; font-size: 0.7em; background: #95a5a6; margin: 0; line-height: 1; border-radius: 4px;">ヒントをリセット</button>
             </div>
         </div>
         <div class="word-inputs">
-            <input type="text" id="word1" placeholder="種1（どんな言葉でもOK！）" oninput="validateInputs(); checkRaceMode()">
-            <input type="text" id="word2" placeholder="種2（どんな言葉でもOK！）" oninput="validateInputs(); checkRaceMode()">
-            <input type="text" id="word3" placeholder="種3（どんな言葉でもOK！）" oninput="validateInputs(); checkRaceMode()">
+            <input type="text" id="word1" placeholder="種 1（どんな言葉でもOK！）" oninput="validateInputs(); checkRaceMode()">
+            <input type="text" id="word2" placeholder="種 2（どんな言葉でもOK！）" oninput="validateInputs(); checkRaceMode()">
+            <input type="text" id="word3" placeholder="種 3（どんな言葉でもOK！）" oninput="validateInputs(); checkRaceMode()">
         </div>
     </div>
 
@@ -657,9 +657,9 @@ function showHints() {
 }
 
 function resetHints() {
-    document.getElementById('word1').placeholder = "種1（どんな言葉でもOK！）";
-    document.getElementById('word2').placeholder = "種2（どんな言葉でもOK！）";
-    document.getElementById('word3').placeholder = "種3（どんな言葉でもOK！）";
+    document.getElementById('word1').placeholder = "種 1（どんな言葉でもOK！）";
+    document.getElementById('word2').placeholder = "種 2（どんな言葉でもOK！）";
+    document.getElementById('word3').placeholder = "種 3（どんな言葉でもOK！）";
 }
 
 function generatePrediction() {
