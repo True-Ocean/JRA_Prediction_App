@@ -599,7 +599,7 @@ function validateInputs() {
         errorEl.classList.remove('show');
     }
     // 「種の欠如エラー」が表示されている時に、種が入力されたら消す
-    if (isWordOk && errorEl.innerText === "エラー：最低1つ、予想の種を蒔いてね！") {
+    if (isWordOk && errorEl.innerText === "エラー：最低1つは種を蒔いてね！") {
         errorEl.classList.remove('show');
     }
 
@@ -683,7 +683,7 @@ function generatePrediction() {
 
     // 【次に優先】レース条件はOKだが、種が1つもない場合
     if (!status.wordOk) {
-        showError("エラー：最低1つ、予想の種を蒔いてね！");
+        showError("エラー：最低1つは種を蒔いてね！");
         return;
     }
 
@@ -738,7 +738,7 @@ function generatePrediction() {
     for(let i = 0; i < 5; i++) {
         if (i >= count) break;
         const horseNum = horses[i];
-        const waku = getWakuInfo(horseNum, count); // 修正した新ロジックを使用
+        const waku = getWakuInfo(horseNum, count);
         let infoHtml = "";
         let lineText = `${marks[i].s} ${horseNum}`;
 
@@ -755,7 +755,7 @@ function generatePrediction() {
             lineText += ` ${horse.name}`;
         }
 
-        // 枠線の色（waku.border）も反映させるよう修正
+        // 枠色
         html += `
             <div class="prediction-item">
                 <div class="mark">${marks[i].s}</div>
