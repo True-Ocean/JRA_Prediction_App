@@ -301,13 +301,14 @@
                 <option value="">-- 選択 --</option>
                 <option value="芝">芝</option>
                 <option value="ダート" selected>ダート</option>
+                <option value="障害">障害</option>
             </select>
         </div>
         <div class="form-group"><label>距離</label>
             <select id="distance" onchange="checkRaceMode(); validateInputs()">
                 <option value="">-- 選択 --</option>
                 <script>
-                    const dists = ['1000','1150','1200','1300','1400','1500','1600','1700','1800','1900','2000','2100','2200','2300','2400','2500','2600','3000','3200','3400','3600'];
+                    const dists = ['1000','1150','1200','1300','1400','1500','1600','1700','1800','1900','2000','2100','2200','2300','2400','2500','2600','3000','3200','3400','3600','3900'];
                     dists.forEach(d => {
                         const sel = (d === '1600' ? 'selected' : '');
                         document.write(`<option value="${d}" ${sel}>${d}m</option>`);
