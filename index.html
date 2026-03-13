@@ -395,7 +395,11 @@ let currentActiveRace = null;
 let currentPredictionText = "";
 
 window.onload = function() {
-    const today = new Date().toISOString().split('T')[0];
+    // 日本時間(JST)の現在日付を取得する
+    const now = new Date();
+    const jstDate = new Date(now.getTime() + (9 * 60 * 60 * 1000)); // 9時間加算
+    const today = jstDate.toISOString().split('T')[0];
+    
     document.getElementById('raceDate').value = today;
 
     // 外部JSONファイルを読み込む
@@ -448,7 +452,7 @@ function applySelectedRace(forcedIndex = null) {
 
     if (index === "-1") {
         toggleInputsDisabled(false);
-        const today = new Date().toISOString().split('T')[0];
+        const today = new Date(new Date().getTime() + (9 * 60 * 60 * 1000)).toISOString().split('T')[0];
         document.getElementById('raceDate').value = today;
         document.getElementById('venue').value = "";
         document.getElementById('raceNum').value = "";
