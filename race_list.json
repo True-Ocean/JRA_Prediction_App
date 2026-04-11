@@ -1,5 +1,58 @@
 [
   {
+    "raceDate": "2026-04-11",
+    "title": "阪神牝馬S",
+    "venue": "阪神",
+    "raceNum": "11R",
+    "track": "芝",
+    "distance": "1600",
+    "ageLimit": "4歳上 牝",
+    "raceClass": "G2",
+    "weightType": "別定",
+    "horseCount": 10,
+    "horses": [
+      { "name": "エンブロイダリー", "info": "牝4", "jockey": "ルメール" },
+      { "name": "カピリナ", "info": "牝5", "jockey": "横山典弘" },
+      { "name": "ルージュソリテール", "info": "牝4", "jockey": "西塚洸二" },
+      { "name": "ラヴァンダ", "info": "牝5", "jockey": "岩田望来" },
+      { "name": "カムニャック", "info": "牝4", "jockey": "川田将雅" },
+      { "name": "アスコリピチェーノ", "info": "牝5", "jockey": "坂井瑠星" },
+      { "name": "クランフォード", "info": "牝5", "jockey": "幸英明" },
+      { "name": "カナテープ", "info": "牝7", "jockey": "松山弘平" },
+      { "name": "エポックヴィーナス", "info": "牝5", "jockey": "酒井学" },
+      { "name": "ビップデイジー", "info": "牝4", "jockey": "西村淳也" }
+    ]
+  },
+  {
+    "raceDate": "2026-04-11",
+    "title": "ニュージーランドT",
+    "venue": "中山",
+    "raceNum": "11R",
+    "track": "芝",
+    "distance": "1600",
+    "ageLimit": "3歳",
+    "raceClass": "G2",
+    "weightType": "馬齢",
+    "horseCount": 15,
+    "horses": [
+      { "name": "ハノハノ", "info": "牝3", "jockey": "岩田康誠" },
+      { "name": "マダックス", "info": "牡3", "jockey": "吉田豊" },
+      { "name": "レザベーション", "info": "牡3", "jockey": "原優介" },
+      { "name": "ヒズマスターピース", "info": "牝3", "jockey": "佐々木大" },
+      { "name": "ジーネキング", "info": "牡3", "jockey": "横山和生" },
+      { "name": "シュペルリング", "info": "牡3", "jockey": "ディー" },
+      { "name": "ロデオドライブ", "info": "牡3", "jockey": "津村明秀" },
+      { "name": "スマイルカーブ", "info": "牝3", "jockey": "大野拓弥" },
+      { "name": "ブルズアイプリンス", "info": "牡3", "jockey": "柴田善臣" },
+      { "name": "ジーティーシンドウ", "info": "牡3", "jockey": "田辺裕信" },
+      { "name": "ゴーラッキー", "info": "牡3", "jockey": "横山武史" },
+      { "name": "アルデトップガン", "info": "牡3", "jockey": "三浦皇成" },
+      { "name": "ガリレア", "info": "牡3", "jockey": "石橋脩" },
+      { "name": "ディールメーカー", "info": "牡3", "jockey": "戸崎圭太" },
+      { "name": "ミリオンクラウン", "info": "牡3", "jockey": "柴田大知" }
+    ]
+  },
+  {
     "raceDate": "2026-04-12",
     "title": "桜花賞",
     "venue": "阪神",
