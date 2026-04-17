@@ -1,4 +1,58 @@
-[
+[  
+  {
+    "raceDate": "2026-04-18",
+    "title": "アンタレスS",
+    "venue": "阪神",
+    "raceNum": "11R",
+    "track": "ダート",
+    "distance": "1800",
+    "ageLimit": "4歳上",
+    "raceClass": "G3",
+    "weightType": "別定",
+    "horseCount": 16,
+    "horses": [
+      { "name": "ブライアンセンス", "info": "牡6", "jockey": "岩田望来" },
+      { "name": "モックモック", "info": "牡6", "jockey": "武豊" },
+      { "name": "タガノバビロン", "info": "牡4", "jockey": "松山弘平" },
+      { "name": "ムルソー", "info": "牡5", "jockey": "坂井瑠星" },
+      { "name": "ハグ", "info": "牡4", "jockey": "高杉吏麒" },
+      { "name": "ルシュヴァルドール", "info": "牡5", "jockey": "西村淳也" },
+      { "name": "ペイシャエス", "info": "牡7", "jockey": "田口貫太" },
+      { "name": "サンデーファンデー", "info": "牡6", "jockey": "角田大和" },
+      { "name": "ピカピカサンダー", "info": "牡4", "jockey": "三浦皇成" },
+      { "name": "ジェイパームス", "info": "セ6", "jockey": "レーン" },
+      { "name": "ハピ", "info": "牡7", "jockey": "幸英明" },
+      { "name": "サイモンザナドゥ", "info": "牡6", "jockey": "池添謙一" },
+      { "name": "メイショウズイウン", "info": "牡4", "jockey": "太宰啓介" },
+      { "name": "シュラザック", "info": "牡4", "jockey": "古川吉洋" },
+      { "name": "ロードラビリンス", "info": "牡4", "jockey": "鮫島克駿" },
+      { "name": "ジューンアヲニヨシ", "info": "牡6", "jockey": "浜中俊" }
+    ]
+  },
+  {
+    "raceDate": "2026-04-18",
+    "title": "中山グランドジャンプ",
+    "venue": "中山",
+    "raceNum": "11R",
+    "track": "障害",
+    "distance": "4260",
+    "ageLimit": "4歳上",
+    "raceClass": "G1",
+    "weightType": "定量",
+    "horseCount": 10,
+    "horses": [
+      { "name": "ポリトナリティー", "info": "牝5", "jockey": "水沼元輝" },
+      { "name": "フォージドブリック", "info": "牡5", "jockey": "大江原圭" },
+      { "name": "ホウオウプロサンゲ", "info": "牡5", "jockey": "小野寺祐" },
+      { "name": "サンデイビス", "info": "牡8", "jockey": "上野翔" },
+      { "name": "プラチナドリーム", "info": "牡7", "jockey": "石神深一" },
+      { "name": "エコロデュエル", "info": "牡7", "jockey": "草野太郎" },
+      { "name": "ネビーイーム", "info": "牡8", "jockey": "小牧加矢" },
+      { "name": "ヘザルフェン", "info": "牡5", "jockey": "森一馬" },
+      { "name": "タンジェントアーク", "info": "セ8", "jockey": "五十嵐雄" },
+      { "name": "ディナースタ", "info": "牡7", "jockey": "高田潤" }
+    ]
+  },
   {
     "raceDate": "2026-04-19",
     "title": "皐月賞",
