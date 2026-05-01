@@ -18,6 +18,7 @@ Draft_ipynb/
 Media_files/
 SQL/
 .DS_Store
+.vscode/
 .cursor/
 
 # Streamlitの秘密設定ファイル
