@@ -1,5 +1,32 @@
 [
   {
+    "raceDate": "2026-06-13",
+    "title": "函館スプリントS",
+    "venue": "函館",
+    "raceNum": "11R",
+    "track": "芝",
+    "distance": "1200",
+    "ageLimit": "3歳上",
+    "raceClass": "G3",
+    "weightType": "別定",
+    "horseCount": 13,
+    "horses": [
+      { "name": "モズナナスター", "info": "牝4", "jockey": "鮫島克駿" },
+      { "name": "ダノンマッキンリー", "info": "牡5", "jockey": "池添謙一" },
+      { "name": "レイピア", "info": "牡4", "jockey": "横山武史" },
+      { "name": "カルプスペルシュ", "info": "牝4", "jockey": "丹内祐次" },
+      { "name": "ジョーメッドヴィン", "info": "牡5", "jockey": "横山琉人" },
+      { "name": "ウイングレイテスト", "info": "牡9", "jockey": "松岡正海" },
+      { "name": "ビューロマジック", "info": "牝5", "jockey": "北村友一" },
+      { "name": "ポッドベイダー", "info": "牡4", "jockey": "荻野極" },
+      { "name": "クラスペディア", "info": "牡4", "jockey": "小崎綾也" },
+      { "name": "エーティーマクフィ", "info": "牡7", "jockey": "富田暁" },
+      { "name": "インビンシブルパパ", "info": "牡5", "jockey": "佐々木大" },
+      { "name": "ルシード", "info": "牡4", "jockey": "横山和生" },
+      { "name": "シュタールヴィント", "info": "牡6", "jockey": "岩田康誠" }
+    ]
+  },
+  {
     "raceDate": "2026-06-14",
     "title": "宝塚記念",
     "venue": "阪神",
