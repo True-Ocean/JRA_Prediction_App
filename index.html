@@ -676,6 +676,12 @@ function resetHints() {
     document.getElementById('word3').placeholder = "種 3（どんな言葉でもOK！）";
 }
 
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[char]);
+}
+
 function generatePrediction() {
     const errorEl = document.getElementById('errorMessage');
     const showError = (message) => {
@@ -763,10 +769,10 @@ function generatePrediction() {
             infoHtml = `
                 <div class="horse-info">
                     <div class="horse-name-row">
-                        <span class="horse-name">${horse.name}</span>
-                        <span class="horse-info-meta">${horse.info}</span>
+                        <span class="horse-name">${escapeHtml(horse.name)}</span>
+                        <span class="horse-info-meta">${escapeHtml(horse.info)}</span>
                     </div>
-                    <div class="jockey-name">${horse.jockey}</div>
+                    <div class="jockey-name">${escapeHtml(horse.jockey)}</div>
                 </div>`;
             lineText += ` ${horse.name}`;
         }
